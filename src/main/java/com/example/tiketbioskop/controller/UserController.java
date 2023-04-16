@@ -2,6 +2,7 @@ package com.example.tiketbioskop.controller;
 
 import com.example.tiketbioskop.dto.UserDTO;
 import com.example.tiketbioskop.model.User;
+import com.example.tiketbioskop.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public class UserController {
 
 //    bikin requirement CRUD
+    private UserService userService;
 
     @PostMapping("/create")
     public User create(@RequestBody UserDTO request){
