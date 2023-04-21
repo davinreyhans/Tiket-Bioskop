@@ -21,7 +21,7 @@ public class UserController {
 //    }
 
     // Add User with postman
-    @PostMapping("/create")
+    @PostMapping("/addUser")
     public String addUser(@RequestBody User user) {
         userService.addUser(user.getUsername(), user.getEmail(), user.getPassword());
         return "Add User Success!";

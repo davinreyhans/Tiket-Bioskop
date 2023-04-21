@@ -14,12 +14,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void addUser(String username, String email, String password) {
-        User users = new User();
+        User user = new User();
         // Insert Data
-        users.setUsername(username);
-        users.setEmail(email);
-        users.setPassword(password);
-        userRepository.save(users);
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(password);
+        userRepository.save(user);
     }
 
     @Override
