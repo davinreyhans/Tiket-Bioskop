@@ -5,8 +5,7 @@ import com.example.tiketbioskop.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public abstract class UserServiceImpl implements UserService{
-
+public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
@@ -14,11 +13,28 @@ public abstract class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User addUser(User user) {
-        user.getUsername();
-        user.getEmail();
-        user.getPassword();
-        return userRepository.save(user);
+    public void addUser(String username, String email, String password) {
+        User users = new User();
+        // Insert Data
+        users.setUsername(username);
+        users.setEmail(email);
+        users.setPassword(password);
+        userRepository.save(users);
     }
+
+    @Override
+    public void updateUser(String username, String newUsername, String newEmail, String newPassword) {
+        User user = userRepository.findByUsername(username);
+        user.setUsername(newUsername);
+        user.setEmail(newEmail);
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(Integer userId) {
+        userRepository.deleteById(userId);
+    }
+
 
 }
