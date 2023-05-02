@@ -18,8 +18,8 @@ import java.io.Serializable;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "user_id")
+    private Integer userId;
 
     @Column(name = "username")
     private String username;

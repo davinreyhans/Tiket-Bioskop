@@ -13,28 +13,38 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void addUser(String username, String email, String password) {
-        User user = new User();
-        // Insert Data
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(password);
-        userRepository.save(user);
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override
-    public void updateUser(String username, String newUsername, String newEmail, String newPassword) {
-        User user = userRepository.findByUsername(username);
-        user.setUsername(newUsername);
-        user.setEmail(newEmail);
-        user.setPassword(newPassword);
-        userRepository.save(user);
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
-    public void deleteUser(Integer userId) {
+    public User addUser(User user) {
+        user.getUsername();
+        user.getEmail();
+        user.getPassword();
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User updateUserById(User user) {
+        user.getUsername();
+        User updateUser = userRepository.findById(user.getUserId()).get();
+        updateUser.setUsername(user.getUsername());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setPassword(user.getPassword());
+        return userRepository.save(updateUser);
+    }
+
+
+    @Override
+    public String deleteUser(Integer userId) {
         userRepository.deleteById(userId);
+        return "Delete user id " + userId + " has been successful!";
     }
-
 
 }

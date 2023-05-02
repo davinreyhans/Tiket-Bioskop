@@ -1,13 +1,20 @@
 package com.example.tiketbioskop.service;
 
+import com.example.tiketbioskop.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
-    void addUser(String username, String email, String password);
 
-    void updateUser(String username, String newUsername, String newEmail, String newPassword);
+    User getUserByUsername(String username);
 
-    void deleteUser(Integer userId);
+    User getUserByEmail(String email);
+
+    User addUser(User user);
+
+    User updateUserById(User user);
+
+    String deleteUser(Integer userId);
+
 
 }
