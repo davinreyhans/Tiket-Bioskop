@@ -1,7 +1,7 @@
 package com.example.tiketbioskop.controller;
 
-import com.example.tiketbioskop.model.User;
-import com.example.tiketbioskop.service.UserService;
+import com.example.tiketbioskop.model.Users;
+import com.example.tiketbioskop.service.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,41 +12,51 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")    //untuk custom path API nya
-public class UserController {
+@RequestMapping("/users")    //untuk custom path API nya
+public class UsersController {
 
-    private final UserService userService;
+    private final UsersService usersService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UsersController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     @Operation(summary = "This API method function to read existing user information by inputting the username.")
+
+    // Get All User by username
+    @GetMapping("/get-users")
+    public ResponseEntity<List<Users>> getAllUsers() {
+        List<Users> users = usersService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
     // Get User by username
-    @GetMapping("/get-username/{username}")
+    @GetMapping("/get-user-by-username/{username}")
     public ResponseEntity<Map<String, Object>> getUserByUsername(@Schema(example = "Fill in name") @PathVariable String username) {
-        User users = userService.getUserByUsername(username);
+        Users users = usersService.getUserByUsername(username);
 
         return getMapResponseEntity(users);
     }
 
     // Get User by email
     @Operation(summary = "This API method function to read existing user information by inputting the email.")
-    @GetMapping("/get-email/{email}")
+    @GetMapping("/get-user-by-email/{email}")
     public ResponseEntity<Map<String, Object>> getUserByEmail(@Schema(example = "Fill in email")@PathVariable String email) {
-        User user = userService.getUserByEmail(email);
+        Users users = usersService.getUserByEmail(email);
 
-        return getMapResponseEntity(user);
+        return getMapResponseEntity(users);
     }
 
-    private ResponseEntity<Map<String, Object>> getMapResponseEntity(User user) {
+    private ResponseEntity<Map<String, Object>> getMapResponseEntity(Users users) {
         Map<String, Object> respBody = new HashMap<>();
-        respBody.put("ID User", user.getUserId());
-        respBody.put("Nama Lengkap", user.getUsername());
-        respBody.put("Email", user.getEmail());
+        respBody.put("ID User", users.getUserId());
+        respBody.put("Nama Lengkap", users.getUsername());
+        respBody.put("Email", users.getEmail());
+
         return new ResponseEntity<>(respBody, HttpStatus.FOUND);
     }
 
@@ -65,15 +75,14 @@ public class UserController {
     @Operation(summary = "This API method function to add a user by inputting a username, email, password and will be stored in the Users entity.")
 
     // Add User with postman
-    // endpoint: http://localhost:8080/user/add-user
     @PostMapping("/add-user")
-    public ResponseEntity<User> addUser(@Schema(example = "{" +
+    public ResponseEntity<Users> addUser(@Schema(example = "{" +
             "\"userId\":\"1\","+
             "\"username\":\"Davin\","+
             "\"password\":\"passDavin\"," +
-            "\"email\":\"davin@email.com\"}")@RequestBody User user) {
-        userService.addUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+            "\"email\":\"davin@email.com\"}")@RequestBody Users users) {
+        usersService.addUser(users);
+        return new ResponseEntity<>(users, HttpStatus.CREATED);
     }
 
     // Custom response to update user
@@ -91,22 +100,21 @@ public class UserController {
     @Operation(summary = "This API method function to update the user that has been inputted by re-entering the userId, username, password, and email that you want to update.")
 
     // Update User
-    // endpoint: http://localhost:8080/user/update-user
     @PutMapping("/update-user")
-    public ResponseEntity<User> updateUser(@Schema(example = "{" +
+    public ResponseEntity<Users> updateUser(@Schema(example = "{" +
             "\"userId\":\"1\","+
             "\"username\":\"Davin\","+
             "\"password\":\"passDavin\"," +
-            "\"email\":\"ivan@email.com\"}") @RequestBody User user) {
-        userService.updateUserById(user);
-        return new ResponseEntity<>(user, HttpStatus.ACCEPTED);
+            "\"email\":\"ivan@email.com\"}") @RequestBody Users users) {
+        usersService.updateUserById(users);
+        return new ResponseEntity<>(users, HttpStatus.ACCEPTED);
     }
 
     // Delete User
     @Operation(summary = "This API method function to delete the user you want by inputting the user id.")
     @DeleteMapping("/delete-user/{userId}")
     public ResponseEntity<Integer> deleteUser(@Schema(example = "Fill in user id") @PathVariable Integer userId) {
-        userService.deleteUser(userId);
+        usersService.deleteUser(userId);
         return new ResponseEntity<>(userId, HttpStatus.ACCEPTED);
     }
 
