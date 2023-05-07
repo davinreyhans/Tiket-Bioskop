@@ -110,12 +110,17 @@ public class UsersController {
         return new ResponseEntity<>(users, HttpStatus.ACCEPTED);
     }
 
+    // Custom response to delete user
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Successfully deleted the user!"),
+            @ApiResponse(responseCode = "404", description = "Failed to delete the user. User not found.",
+                    content = { @Content})})
+
     // Delete User
     @Operation(summary = "This API method function to delete the user you want by inputting the user id.")
     @DeleteMapping("/delete-user/{userId}")
-    public ResponseEntity<Integer> deleteUser(@Schema(example = "Fill in user id") @PathVariable Integer userId) {
+    public ResponseEntity<String> deleteUser(@Schema(example = "Fill in user id") @PathVariable Integer userId) {
         usersService.deleteUser(userId);
-        return new ResponseEntity<>(userId, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>("Successfully deleted user " + userId + "!", HttpStatus.ACCEPTED);
     }
-
 }
