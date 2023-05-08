@@ -1,18 +1,14 @@
 package com.example.tiketbioskop.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@Entity(name = "Films")
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "film_code"))
-public class Films implements Serializable {
+public class Films {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id")

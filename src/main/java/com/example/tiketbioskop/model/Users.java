@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.io.Serializable;
 
-@Entity(name = "User")
+@Entity(name = "Users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,5 +29,4 @@ public class Users implements Serializable {
 
     @Column(name = "password")
     private String password;
-
 }

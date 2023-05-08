@@ -9,11 +9,11 @@ import java.util.List;
 @Service
 public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
-
     public UsersServiceImpl(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
 
+    //GET
     @Override
     public List<Users> getAllUsers() {
         return usersRepository.findAll();
@@ -29,11 +29,13 @@ public class UsersServiceImpl implements UsersService {
         return usersRepository.findByEmail(email);
     }
 
+    //POST
     @Override
     public Users addUser(Users users) {
         return usersRepository.save(users);
     }
 
+    //PUT
     @Override
     public Users updateUserById(Users users) {
         Users updateUsers = usersRepository.findByUserId(users.getUserId());
@@ -43,10 +45,10 @@ public class UsersServiceImpl implements UsersService {
         return usersRepository.save(updateUsers);
     }
 
-
+    //DELETE
     @Override
     public String deleteUser(int userId) {
         usersRepository.deleteById(userId);
-        return "Delete user id " + userId + " has been successful!";
+        return "Delete user id '" + userId + "' has been successful!";
     }
 }
