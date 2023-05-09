@@ -1,23 +1,27 @@
 package com.example.tiketbioskop.service;
 
 import com.example.tiketbioskop.model.Films;
+import com.example.tiketbioskop.model.Schedules;
 import com.example.tiketbioskop.repository.FilmsRepository;
+import com.example.tiketbioskop.repository.SchedulesRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class FilmsServiceImpl implements FilmsService {
-    private final FilmsRepository filmsRepository;
-    public FilmsServiceImpl(FilmsRepository filmsRepository) {
-        this.filmsRepository = filmsRepository;
-    }
+    @Autowired
+    private FilmsRepository filmsRepository;
+
+    @Autowired
+    private SchedulesRepository schedulesRepository;
 
     //GET
-//    @Override
-//    public List<Films> getAllFilms() {
-//        return filmsRepository.findAll();
-//    }
+    @Override
+    public List<Films> getAllFilms() {
+        return filmsRepository.findAll();
+    }
     @Override
     public Films getFilmById(Integer filmId) {
         return filmsRepository.findFilmByFilmId(filmId);
@@ -29,6 +33,11 @@ public class FilmsServiceImpl implements FilmsService {
     @Override
     public Films getFilmByName(String filmName) {
         return filmsRepository.findFilmByFilmName(filmName);
+    }
+    @Override
+    public void getSchedulesFilms(Integer filmId) {
+        List<Schedules> listSchedules = schedulesRepository.findSchedulesByFilmId(filmId);
+        listSchedules.forEach(schedules -> System.out.println(listSchedules.toString()));
     }
 
     //POST
