@@ -51,6 +51,6 @@ public class FilmsServiceImpl implements FilmsService {
     @Override
     public String deleteFilm(int filmId) {
         filmsRepository.deleteById((filmId));
-        return "Delete user id '" + filmId + "' has been successful!";
+        return "Delete film id '" + filmId + "' has been successful!";
     }
 }
