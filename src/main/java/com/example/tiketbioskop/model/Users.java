@@ -1,5 +1,6 @@
 package com.example.tiketbioskop.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +22,15 @@ public class Users implements Serializable {
     @Column(name = "user_id")
     private Integer userId;
 
+    @NotNull
     @Column(name = "username")
     private String username;
 
+    @NotNull
     @Column(name = "email")
     private String email;
 
+    @NotNull
     @Column(name = "password")
     private String password;
 }
