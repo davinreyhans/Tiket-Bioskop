@@ -12,10 +12,11 @@ import java.util.List;
 @Repository
 @Transactional
 public interface SchedulesRepository extends JpaRepository<Schedules, Integer> {
-    Schedules findSchedulesBySchedulesId(Integer schedulesId);
+    Schedules findSchedulesByScheduleId(Integer scheduleId);
 
-    @Query(value = "select s.*, f.film_name from schedules s " +
-            "inner join films f on s.film_id = f.film_id where f.film_id = :film_id", nativeQuery = true)
+    @Query(value = "select s.*, f.film_name from schedules s "
+            + "inner join films f on s.film_id = f.film_id " +
+            "where f.film_id = :film_id", nativeQuery = true)
     List<Schedules> findSchedulesByFilmId(@Param("film_id") Integer filmId);
 
 }

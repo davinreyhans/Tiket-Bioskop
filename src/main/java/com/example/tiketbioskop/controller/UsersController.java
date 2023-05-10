@@ -2,7 +2,6 @@ package com.example.tiketbioskop.controller;
 
 import com.example.tiketbioskop.model.Users;
 import com.example.tiketbioskop.service.UsersService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")    //untuk custom path API nya
+@RequestMapping("/users")
 public class UsersController {
-    @Autowired
-    private UsersService usersService;
+    private final UsersService usersService;
+
+    public UsersController(UsersService usersService) {
+        this.usersService = usersService;
+    }
 
     // Get All Users
-    @GetMapping("/get-users")
+    @GetMapping("/get-all-user")
     public ResponseEntity<List<Users>> getAllUsers() {
         List<Users> users = usersService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
@@ -38,6 +40,7 @@ public class UsersController {
         return getMapResponseEntity(users);
     }
 
+    //Map Response Entity for Get User by Username/Email
     private ResponseEntity<Map<String, Object>> getMapResponseEntity(Users users) {
         Map<String, Object> respBody = new HashMap<>();
         respBody.put("ID User", users.getUserId());
@@ -46,7 +49,7 @@ public class UsersController {
         return new ResponseEntity<>(respBody, HttpStatus.FOUND);
     }
 
-    // Add User with postman
+    // Add User with Postman
     @PostMapping("/add-user")
     public ResponseEntity<Users> addUser(@RequestBody Users users) {
         usersService.addUser(users);
@@ -64,6 +67,6 @@ public class UsersController {
     @DeleteMapping("/delete-user/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer userId) {
         usersService.deleteUser(userId);
-        return new ResponseEntity<>("Successfully deleted user " + userId + "!", HttpStatus.ACCEPTED);
+        return new ResponseEntity<>("Successfully deleted user_id " + userId + "!", HttpStatus.ACCEPTED);
     }
 }
