@@ -1,7 +1,6 @@
 package com.example.tiketbioskop.repository;
 
 import com.example.tiketbioskop.model.Films;
-import com.example.tiketbioskop.model.Users;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +17,8 @@ public interface FilmsRepository extends JpaRepository<Films, Integer> {
     Films findFilmByFilmName(String filmName);
 
     @Query(value = "select * from Films f where f.is_showing=true", nativeQuery = true)
-    List<Films> getFilmTayang();
+    List<Films> getAllShowingFilm();
+
+    @Query(value = "select * from Films f where f.is_showing=false", nativeQuery = true)
+    List<Films> getAllNotShowingFilm();
 }
