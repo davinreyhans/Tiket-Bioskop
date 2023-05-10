@@ -4,18 +4,20 @@ import com.example.tiketbioskop.model.Films;
 import com.example.tiketbioskop.model.Schedules;
 import com.example.tiketbioskop.repository.FilmsRepository;
 import com.example.tiketbioskop.repository.SchedulesRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class FilmsServiceImpl implements FilmsService {
-    @Autowired
-    private FilmsRepository filmsRepository;
+    private final FilmsRepository filmsRepository;
 
-    @Autowired
-    private SchedulesRepository schedulesRepository;
+    private final SchedulesRepository schedulesRepository;
+
+    public FilmsServiceImpl(FilmsRepository filmsRepository, SchedulesRepository schedulesRepository) {
+        this.filmsRepository = filmsRepository;
+        this.schedulesRepository = schedulesRepository;
+    }
 
     //GET
     @Override
@@ -24,18 +26,28 @@ public class FilmsServiceImpl implements FilmsService {
     }
 
     @Override
-    public Films getFilmById(Integer filmId) {
+    public List<Films> getAllShowingFilm() {
+        return filmsRepository.getAllShowingFilm();
+    }
+
+    @Override
+    public List<Films> getAllNotShowingFilm() {
+        return filmsRepository.getAllNotShowingFilm();
+    }
+
+    @Override
+    public Films getFilmByFilmName(String filmName) {
+        return filmsRepository.findFilmByFilmName(filmName);
+    }
+
+    @Override
+    public Films getFilmByFilmId(Integer filmId) {
         return filmsRepository.findFilmByFilmId(filmId);
     }
 
     @Override
-    public Films getFilmByCode(String filmCode) {
+    public Films getFilmByFilmCode(String filmCode) {
         return filmsRepository.findFilmByFilmCode(filmCode);
-    }
-
-    @Override
-    public Films getFilmByName(String filmName) {
-        return filmsRepository.findFilmByFilmName(filmName);
     }
 
     @Override
