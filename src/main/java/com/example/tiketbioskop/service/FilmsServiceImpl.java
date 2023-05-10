@@ -22,18 +22,22 @@ public class FilmsServiceImpl implements FilmsService {
     public List<Films> getAllFilms() {
         return filmsRepository.findAll();
     }
+
     @Override
     public Films getFilmById(Integer filmId) {
         return filmsRepository.findFilmByFilmId(filmId);
     }
+
     @Override
     public Films getFilmByCode(String filmCode) {
         return filmsRepository.findFilmByFilmCode(filmCode);
     }
+
     @Override
     public Films getFilmByName(String filmName) {
         return filmsRepository.findFilmByFilmName(filmName);
     }
+
     @Override
     public void getSchedulesFilms(Integer filmId) {
         List<Schedules> listSchedules = schedulesRepository.findSchedulesByFilmId(filmId);

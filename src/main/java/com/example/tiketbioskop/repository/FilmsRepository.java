@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface FilmsRepository extends JpaRepository<Films, Integer> {
-//    List<Films> findAll();
+    List<Films> findAll();
     Films findFilmByFilmId(Integer filmId);
     Films findFilmByFilmCode(String filmCode);
     Films findFilmByFilmName(String filmName);
