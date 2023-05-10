@@ -9,11 +9,15 @@ import java.util.List;
 public interface FilmsService {
     List<Films> getAllFilms();
 
-    Films getFilmById(Integer filmId);
+    Films getFilmByFilmId(Integer filmId);
 
-    Films getFilmByCode(String filmCode);
+    Films getFilmByFilmCode(String filmCode);
 
-    Films getFilmByName(String filmName);
+    Films getFilmByFilmName(String filmName);
+
+    List<Films> getAllShowingFilm();
+
+    List<Films> getAllNotShowingFilm();
 
     void getSchedulesFilms(Integer filmId);
 
