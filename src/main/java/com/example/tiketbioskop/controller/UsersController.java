@@ -69,4 +69,5 @@ public class UsersController {
         usersService.deleteUser(userId);
         return new ResponseEntity<>("Successfully deleted user_id " + userId + "!", HttpStatus.ACCEPTED);
     }
+
 }
