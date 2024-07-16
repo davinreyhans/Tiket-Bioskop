@@ -17,4 +17,8 @@ public interface DaoUsers extends JpaRepository<Users, Integer> {
     Users findByUsername(String username);
 
     Users findByEmail(String email);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

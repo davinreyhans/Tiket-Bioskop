@@ -55,14 +55,28 @@ public class UsersServiceImpl implements UsersService {
 
     // POST
     @Override
-    public Map<String, Object> addUser(Users users) {
+    public Map<String, Object> addUser(Users users) throws Exception {
         log.debug("addUser [{}]", users);
+
+        Map<String, Object> rslt = new HashMap<>();
+
+        if (daoUsers.existsByUsername(users.getUsername())) {
+            rslt.put("errorMessage", "The '" + users.getUsername() + "' username already exist.");
+            return rslt;
+            // throw new Exception("The \"" + users.getUsername() + "\" username already
+            // exist.");
+        }
+
+        if (daoUsers.existsByEmail(users.getEmail())) {
+            rslt.put("errorMessage", "The '" + users.getEmail() + "' email already exist.");
+            return rslt;
+            // throw new Exception("The \"" + users.getEmail() + "\" email already exist.");
+        }
 
         daoUsers.save(users);
 
         Users user = daoUsers.findByEmail(users.getEmail());
 
-        Map<String, Object> rslt = new HashMap<>();
         rslt.put("message", "Succesfully added new user!");
         rslt.put("user", user);
 
