@@ -8,13 +8,14 @@ import java.util.Map;
 
 @Service
 public interface UsersService {
+
     List<Users> getAllUsers();
 
     Map<String, Object> getUserByUsername(String username);
 
     Map<String, Object> getUserByEmail(String email);
 
-    Map<String, Object> addUser(Users users);
+    Map<String, Object> addUser(Users users) throws Exception;
 
     void updateUserById(Users users);
 

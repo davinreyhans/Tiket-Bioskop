@@ -41,7 +41,7 @@ public class UsersController {
 
     // Add User with Postman
     @PostMapping("/add-user")
-    public ResponseEntity<Map<String, Object>> addUser(@RequestBody Users users) {
+    public ResponseEntity<Map<String, Object>> addUser(@RequestBody Users users) throws Exception {
         Map<String, Object> rslt = usersService.addUser(users);
         return new ResponseEntity<>(rslt, HttpStatus.CREATED);
     }
