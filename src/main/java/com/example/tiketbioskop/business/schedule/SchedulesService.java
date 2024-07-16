@@ -1,6 +1,6 @@
-package com.example.tiketbioskop.service;
+package com.example.tiketbioskop.business.schedule;
 
-import com.example.tiketbioskop.model.Schedules;
+import com.example.tiketbioskop.entity.Schedules;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

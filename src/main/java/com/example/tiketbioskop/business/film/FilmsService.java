@@ -1,6 +1,6 @@
-package com.example.tiketbioskop.service;
+package com.example.tiketbioskop.business.film;
 
-import com.example.tiketbioskop.model.Films;
+import com.example.tiketbioskop.entity.Films;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

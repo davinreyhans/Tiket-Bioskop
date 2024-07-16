@@ -1,4 +1,4 @@
-package com.example.tiketbioskop.model;
+package com.example.tiketbioskop.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

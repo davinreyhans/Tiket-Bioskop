@@ -11,16 +11,7 @@ import java.io.Serializable;
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
-
-public class SeatsId implements Serializable{
-    @Column
+public class SeatsId implements Serializable {
     private Character studioName;
-
-    @Column
     private String seatsCode;
-
-    public void SeatsId(Character studioName, String seatsCode){
-        this.studioName = studioName;
-        this.seatsCode = seatsCode;
-    }
 }

@@ -1,7 +1,6 @@
-package com.example.tiketbioskop.controller;
+package com.example.tiketbioskop.business.film;
 
-import com.example.tiketbioskop.model.Films;
-import com.example.tiketbioskop.service.FilmsService;
+import com.example.tiketbioskop.entity.Films;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

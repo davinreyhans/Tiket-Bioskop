@@ -1,4 +1,4 @@
-package com.example.tiketbioskop.model;
+package com.example.tiketbioskop.entity;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.example.tiketbioskop.model;
+package com.example.tiketbioskop.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,6 +20,6 @@ public class Films {
     @Column(name = "film_name")
     private String filmName;
 
-    @Column(name = "is_showing", columnDefinition = "boolean default false")
+    @Column(name = "is_showing")
     private Boolean isShowing;
 }

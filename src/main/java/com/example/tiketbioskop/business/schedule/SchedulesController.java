@@ -1,6 +1,5 @@
-package com.example.tiketbioskop.controller;
+package com.example.tiketbioskop.business.schedule;
 
-import com.example.tiketbioskop.service.SchedulesService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +16,9 @@ public class SchedulesController {
         this.schedulesService = schedulesService;
     }
 
-    //Add Schedule
-    //Add Schedule
+    // Add Schedule
     @PostMapping("/add-schedule")
-    public ResponseEntity<Map<String, Object>> addSchedule(@RequestBody Map<String, Object> schedules){
+    public ResponseEntity<Map<String, Object>> addSchedule(@RequestBody Map<String, Object> schedules) {
         schedulesService.addSchedule(
                 schedules.get("filmId").toString(),
                 schedules.get("filmDate").toString(),

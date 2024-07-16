@@ -1,4 +1,6 @@
-package com.example.tiketbioskop.model;
+package com.example.tiketbioskop.entity;
+
+import com.example.tiketbioskop.model.SeatsId;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
