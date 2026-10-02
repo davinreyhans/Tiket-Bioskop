@@ -12,6 +12,19 @@ Requires JDK 17+ and a Supabase (PostgreSQL) project.
 
 Tests run against an in-memory H2 database, no Supabase needed: `mvn test`.
 
+### Frontend
+
+Vite + React + TypeScript in `frontend/` (Node 20.19+ / 22.12+):
+
+```sh
+cd frontend
+npm install
+npm run dev   # http://localhost:5173
+```
+
+With the backend running on :8080, call it from the frontend as `/api/...` (e.g. `/api/films`):
+the Vite dev server proxies it to `http://localhost:8080/films`, so no CORS setup is needed in development.
+
 ## Auth
 
 JWT. Register with `POST /users`, log in with `POST /auth/login` (`{"username":"…","password":"…"}`),

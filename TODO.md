@@ -28,31 +28,31 @@
 
 Catatan API: endpoint daftar (`/films`, `/films/search`, `/schedules`, `/users`) mengembalikan
 `{"content": [...], "page": {...}}`, endpoint lain berupa objek / array biasa.
+Saat development panggil backend lewat `/api/...` (mis. `/api/films`); prefix `/api` dibuang oleh proxy Vite.
+Error body berisi `message` (dan `errors` per field untuk 400) yang bisa langsung ditampilkan.
 
 ### Setup
-- [ ] Buat proyek Vite + React + TypeScript di `frontend/`
-- [ ] Pastikan `frontend/.gitignore` dari template Vite ikut ter-commit (`node_modules`, `dist`, `*.local`)
-- [ ] Proxy dev server `/auth`, `/films`, `/schedules`, `/users`, `/tickets` → `http://localhost:8080` (tidak perlu CORS saat development)
-
-### Halaman publik
-- [ ] Daftar film + filter "sedang tayang" (`GET /films?showing=true`) + pencarian (`GET /films/search?name=`) + pagination
-- [ ] Detail film + daftar jadwalnya (`GET /schedules?filmId=`, bisa difilter `&date=`)
-- [ ] Register (`POST /users`) dengan pesan error validasi 400 dan duplikat 409
-- [ ] Login (`POST /auth/login`), simpan token, kirim `Authorization: Bearer <token>`, arahkan ke login saat 401 (token habis setelah 24 jam)
+- [x] Buat proyek Vite + React + TypeScript di `frontend/`
+- [x] Pastikan `frontend/.gitignore` dari template Vite ikut ter-commit (`node_modules`, `dist`, `*.local`)
+- [x] Proxy dev server `/api/*` → `http://localhost:8080/*` (tidak perlu CORS sa- [x] Daftar film + filter "sedang tayang" (`GET /films?showing=true`) + pencarian (`GET /films/search?name=`) + pagination
+- [x] Detail film + daftar jadwalnya (`GET /schedules?filmId=`, bisa difilter `&date=`)
+- [x] Register (`POST /users`) dengan pesan error validasi 400 dan duplikat 409
+- [x] Login (`POST /auth/login`), simpan token, kirim `Authorization: Bearer <token>`, arahkan ke login saat 401 (token habis setelah 24 jam)
+gin saat 401 (token habis setelah 24 jam)
 
 ### Halaman user (login)
-- [ ] Pilih kursi: grid baris A–E × nomor 1–10 dari `GET /schedules/{id}/seats`, kursi terisi dinonaktifkan, pilih maks 10
-- [ ] Pesan tiket (`POST /tickets` dengan `{"scheduleId", "seatsCodes": [...]}`), tangani 409 kalau kursi keburu dipesan atau jadwal sudah mulai
-- [ ] Tiket saya (`GET /tickets/me`) + tombol batalkan (`DELETE /tickets/{id}`), nonaktif kalau kurang dari 2 jam sebelum tayang
-- [ ] Edit profil (`PUT /users/me`), login ulang kalau username berubah
+- [x] Pilih kursi: grid baris A–E × nomor 1–10 dari `GET /schedules/{id}/seats`, kursi terisi dinonaktifkan, pilih maks 10
+- [x] Pesan tiket (`POST /tickets` dengan `{"scheduleId", "seatsCodes": [...]}`), tangani 409 kalau kursi keburu dipesan atau jadwal sudah mulai
+- [x] Tiket saya (`GET /tickets/me`) + tombol batalkan (`DELETE /tickets/{id}`), nonaktif kalau kurang dari 2 jam sebelum tayang
+- [x] Edit profil (`PUT /users/me`), login ulang kalau username berubah
 
 ### Halaman admin
-- [ ] Kelola film: tambah / edit / hapus (hapus ditolak 409 kalau masih punya jadwal → tawarkan set "tidak tayang")
-- [ ] Kelola jadwal: tambah / edit / hapus (pilih film, studio, tanggal, jam, harga), tampilkan pesan 409 kalau bentrok di studio yang sama
-- [ ] Daftar user (pagination) & hapus user
+- [x] Kelola film: tambah / edit / hapus (hapus ditolak 409 kalau masih punya jadwal → tawarkan set "tidak tayang")
+- [x] Kelola jadwal: tambah / edit / hapus (pilih film, studio, tanggal, jam, harga), tampilkan pesan 409 kalau bentrok di studio yang sama
+- [x] Daftar user (pagination) & hapus user
 
 ### Bergantung ke backend
 - [x] Auth: JWT dulu sebelum login di frontend dibuat, supaya password tidak disimpan di browser (lihat bagian Teknis)
 - [ ] CORS di backend untuk domain frontend production
-- [ ] Deploy: frontend ke Vercel (Root Directory = `frontend/`), backend ke hosting terpisah
+- [ ] Deploy: frontend ke Vercel (Root Directory = `frontend/`), backend ke hosting terpisah; base URL API production lewat env var (mis. `VITE_API_URL`)
 - [ ] CI: tambah build frontend ke workflow GitHub Actions
