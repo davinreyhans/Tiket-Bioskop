@@ -1,6 +1,6 @@
 package com.example.tiketbioskop.model;
 
-import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 public class SeatsId implements Serializable {
     private Character studioName;
     private String seatsCode;

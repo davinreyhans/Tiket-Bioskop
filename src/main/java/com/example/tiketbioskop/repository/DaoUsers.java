@@ -1,24 +1,14 @@
 package com.example.tiketbioskop.repository;
 
 import com.example.tiketbioskop.entity.Users;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
-@Transactional
 public interface DaoUsers extends JpaRepository<Users, Integer> {
-    List<Users> findAllByOrderByUserId();
+    Optional<Users> findByUsername(String username);
 
-    Users findByUserId(Integer userId);
-
-    Users findByUsername(String username);
-
-    Users findByEmail(String email);
-
-    boolean existsByUsername(String username);
-
-    boolean existsByEmail(String email);
+    Optional<Users> findByEmail(String email);
 }

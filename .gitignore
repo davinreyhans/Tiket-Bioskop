@@ -32,3 +32,16 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Other ###
+.claude
+.mcp.json
+
+### Env ###
+.env.*
+!.env.example
+
+### OS ###
+Thumbs.db
+desktop.ini
+.DS_Store

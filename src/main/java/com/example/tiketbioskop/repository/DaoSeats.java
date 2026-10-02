@@ -1,12 +1,15 @@
 package com.example.tiketbioskop.repository;
 
 import com.example.tiketbioskop.entity.Seats;
-import jakarta.transaction.Transactional;
+import com.example.tiketbioskop.model.SeatsId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-@Transactional
-public interface DaoSeats extends JpaRepository<Seats, Integer> {
-    Seats findSeatsBySeatsCode(String seatsCode);
+public interface DaoSeats extends JpaRepository<Seats, SeatsId> {
+    List<Seats> findByStudioName(Character studioName);
+
+    boolean existsByStudioName(Character studioName);
 }

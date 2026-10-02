@@ -1,36 +1,31 @@
 package com.example.tiketbioskop.entity;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
 
+@Getter
+@Setter
 @Entity(name = "Users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username"),
-        @UniqueConstraint(columnNames = "email")
-})
-public class Users implements Serializable {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer userId;
 
-    @NotNull
     @Column(name = "username")
     private String username;
 
-    @NotNull
     @Column(name = "email")
     private String email;
 
-    @NotNull
+    @JsonIgnore // BCrypt hash, never sent back to the client
     @Column(name = "password")
     private String password;
+
+    // "USER" or "ADMIN"; admins are promoted by hand in the DB (see README)
+    @Column(name = "role")
+    private String role;
 }
