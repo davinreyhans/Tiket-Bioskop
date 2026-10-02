@@ -97,6 +97,8 @@ class TiketBioskopApplicationTests {
                 .andExpect(jsonPath("$.content[0].filmStartTime").value("19:00:00"))
                 .andExpect(jsonPath("$.page.totalElements").value(2))
                 .andExpect(jsonPath("$.page.totalPages").value(2));
+        mvc.perform(get("/films")).andExpect(jsonPath("$.page.size").value(20));
+        mvc.perform(get("/schedules")).andExpect(jsonPath("$.page.size").value(20));
         mvc.perform(get("/films").param("size", "1000")).andExpect(jsonPath("$.page.size").value(100));
         mvc.perform(get("/films").param("sort", "noSuchField")).andExpect(status().isBadRequest());
         mvc.perform(get("/users").header(HttpHeaders.AUTHORIZATION, bearer("admin")))

@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +40,7 @@ public class UsersController {
 
     // Admin only
     @GetMapping
-    public Page<Users> getAllUsers(@PageableDefault(sort = "userId") Pageable pageable) {
+    public Page<Users> getAllUsers(@SortDefault(sort = "userId") Pageable pageable) {
         return usersUseCase.getAllUsers(pageable);
     }
 

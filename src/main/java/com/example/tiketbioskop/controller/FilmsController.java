@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +20,13 @@ public class FilmsController {
     // Get all films, optionally filtered: /films?showing=true&page=0&size=20
     @GetMapping
     public Page<Films> getFilms(@RequestParam(required = false) Boolean showing,
-                                @PageableDefault(sort = "filmId") Pageable pageable) {
+                                @SortDefault(sort = "filmId") Pageable pageable) {
         return filmsUseCase.getFilms(showing, pageable);
     }
 
     // Search films by (part of) name: /films/search?name=avengers
     @GetMapping("/search")
-    public Page<Films> searchFilms(@RequestParam String name, @PageableDefault(sort = "filmName") Pageable pageable) {
+    public Page<Films> searchFilms(@RequestParam String name, @SortDefault(sort = "filmName") Pageable pageable) {
         return filmsUseCase.searchFilmsByName(name, pageable);
     }
 

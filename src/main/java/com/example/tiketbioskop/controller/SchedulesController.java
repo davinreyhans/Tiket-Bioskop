@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ public class SchedulesController {
     @GetMapping
     public Page<Schedules> getSchedules(@RequestParam(required = false) Integer filmId,
                                         @RequestParam(required = false) LocalDate date,
-                                        @PageableDefault(sort = {"filmDate", "filmStartTime"}) Pageable pageable) {
+                                        @SortDefault(sort = {"filmDate", "filmStartTime"}) Pageable pageable) {
         return schedulesUseCase.getSchedules(filmId, date, pageable);
     }
 
