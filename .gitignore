@@ -36,6 +36,7 @@ build/
 ### Other ###
 .claude
 .mcp.json
+CLAUDE.local.md
 
 ### Env ###
 .env.*
