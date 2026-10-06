@@ -2,8 +2,11 @@
 - tandai x untuk semua task yang sudah selesai
 
 ## Segera
-- [ ] Isi `.env` dengan URL session pooler Supabase yang asli (sekarang masih `aws-0-<region>`)
-- [ ] `mvn spring-boot:run` → pastikan Flyway membuat tabel di schema `bioskop` dan `ddl-auto=validate` lolos di PostgreSQL (baru dites di H2)
+- [x] Isi `.env` dengan URL session pooler Supabase yang asli (`aws-0-ap-southeast-1`, Singapura → region Vercel `sin1`)
+- [x] `mvn spring-boot:run` → pastikan Flyway membuat tabel di schema `bioskop` dan `ddl-auto=validate` lolos di PostgreSQL
+    - [x] Perbaiki filter `?date=` yang 500 di PostgreSQL (lolos di H2): parameter tanggal butuh `cast`
+- [ ] Tes alur tulis di PostgreSQL (register, booking, batal, bentrok jadwal): baru dites di H2
+- [ ] Tes PostgreSQL otomatis (Testcontainers di CI) supaya beda H2 vs PostgreSQL ketahuan sebelum deploy
 - [ ] Buat admin pertama: `update bioskop.users set role = 'ADMIN' where username = '<username>';`
 - [x] Commit semua perubahan backend (refactor, Flyway, JWT, tiket, jadwal, pagination)
 - [ ] Update `tiket-bioskop-diagram.png`: tambah tabel `tickets`, kolom `users.role`, `schedules.studio_name`
@@ -56,8 +59,9 @@ Error body berisi `message` (dan `errors` per field untuk 400) yang bisa langsun
 ### Bergantung ke backend
 - [x] Auth: JWT dulu sebelum login di frontend dibuat, supaya password tidak disimpan di browser (lihat bagian Teknis)
 - [x] CORS di backend untuk domain frontend production (env `CORS_ALLOWED_ORIGINS`)
-- [ ] Deploy: frontend ke Vercel (Root Directory = `frontend/`), backend ke hosting terpisah; base URL API production lewat env var (mis. `VITE_API_URL`)
-    - [x] Siapkan repo: `PORT` dari env, `frontend/vercel.json` (SPA), langkah deploy di README
-    - [ ] Pilih hosting backend (masih ditunda), lalu deploy backend + set env vars
-    - [ ] Deploy frontend ke Vercel dengan `VITE_API_URL`, lalu isi `CORS_ALLOWED_ORIGINS` di backend
+- [ ] Deploy frontend + backend ke satu project Vercel (Vercel Services, gratis di Hobby)
+    - [x] Siapkan repo: `vercel.json` (services), `Dockerfile` backend (port 80, prefix `/api`), build image di CI, langkah deploy di README
+    - [ ] Pastikan CI hijau di GitHub (termasuk job `docker`, Dockerfile belum pernah di-build)
+    - [ ] Import repo di Vercel, isi env `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, samakan region dengan Supabase
+    - [ ] Deploy, cek `/api/films` dan halaman depan, buat admin pertama, ukur lama cold start
 - [x] CI: tambah build frontend ke workflow GitHub Actions

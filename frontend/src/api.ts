@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { clearSession, getToken, saveSession } from './auth'
 
-// Dev: Vite proxies /api to the backend (vite.config.ts). Production: set VITE_API_URL.
+// Dev: Vite proxies /api to the backend (vite.config.ts). On Vercel the backend service is served
+// under /api on the same domain. Set VITE_API_URL only when the backend lives on another domain.
 const BASE_URL = import.meta.env.VITE_API_URL ?? '/api'
 
 export type Page<T> = {

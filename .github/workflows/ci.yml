@@ -17,6 +17,13 @@ jobs:
       # integration tests run on in-memory H2 (profile "test"), no database or secrets needed
       - run: mvn -B test
 
+  # the backend image Vercel deploys (Dockerfile); built here because it can't be built on every dev machine
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t tiket-bioskop-backend .
+
   frontend:
     runs-on: ubuntu-latest
     defaults:

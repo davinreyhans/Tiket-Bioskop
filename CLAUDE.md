@@ -14,12 +14,18 @@ Spring Boot 4.1 (Java 17) backend + Vite/React/TS frontend in `frontend/`. Supab
 - Errors: throw `NotFoundException` / `ConflictException` with a clear message; keep the DB constraint as the race backstop
 - Schema changes = new Flyway file `src/main/resources/db/migration/V{n}__*.sql`; `ddl-auto=validate`, never let Hibernate create tables
 - Schedule times are local cinema time (`bioskop.timezone`); end ≤ start means the show ends next day → use `Schedules.startsAt()/endsAt()`
+- H2 hides PostgreSQL typing errors: a nullable param in `:p is null` needs `cast(:p as LocalDate)` etc. (Integer is fine)
 - Tests: MockMvc renders no error body, assert messages via `result.getResolvedException()`
 
 ## Spring Boot 4 gotchas (silently ignored, no error)
 - Error body fields: `spring.web.error.include-*`, not `server.error.include-*`
 - Pageable sort: `@SortDefault`, not `@PageableDefault` (its `size=10` overrides `spring.data.web.pageable.default-page-size`)
 - Starters were renamed: `spring-boot-starter-webmvc`, `-security-oauth2-resource-server`, `-flyway`, `-webmvc-test`
+
+## Deploy
+- One Vercel project via Services (`vercel.json`): `/api/*` → `Dockerfile` backend, rest → `frontend/`
+- The Dockerfile sets `SERVER_SERVLET_CONTEXT_PATH=/api` and `PORT=80`; locally there is no prefix (Vite proxy strips it)
+- Docker isn't installed locally: the image is only built in CI (`docker` job)
 
 ## Frontend
 - All HTTP via `api()` / `useApi()` in `src/api.ts` (adds Bearer token, 401 → `/login?expired=1`); paths start with `/api` only through `BASE_URL`

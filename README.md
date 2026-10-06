@@ -27,19 +27,28 @@ the Vite dev server proxies it to `http://localhost:8080/films`, so no CORS setu
 
 ## Deploy
 
-Backend and frontend deploy separately; CI (`.github/workflows/ci.yml`) runs the backend tests and the
-frontend lint + build on every push.
+Frontend and backend deploy together as one Vercel project, using
+[Vercel Services](https://vercel.com/docs/services) (`vercel.json`):
 
-**Backend** (any host that runs Java 17: Render, Railway, Fly.io, a VPS, ...):
+| Path | Service | Built from |
+|---|---|---|
+| `/api/*` | `backend` | `Dockerfile` (Spring Boot, served under `/api`, port 80) |
+| everything else | `frontend` | `frontend/` (Vite build, SPA fallback to `index.html`) |
 
-- build: `mvn -B package -DskipTests`, run: `java -jar target/tiket-bioskop-0.0.1-SNAPSHOT.jar`
-- env vars: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, `CORS_ALLOWED_ORIGINS`
-  (the frontend URL, e.g. `https://tiket-bioskop.vercel.app`); `PORT` is honored when the host sets it
-- Flyway creates or updates the tables on startup
+Both are on the same domain, so the frontend calls `/api/...` with no CORS and no `VITE_API_URL`.
+CI (`.github/workflows/ci.yml`) runs the backend tests, builds the Docker image and lints + builds the frontend.
 
-**Frontend** (Vercel): import the repo, set *Root Directory* to `frontend`, and set
-`VITE_API_URL` to the backend URL (e.g. `https://tiket-bioskop-api.example.com`). `frontend/vercel.json`
-sends every path to `index.html`, so refreshing a page like `/films/1` works.
+1. Import the repo in Vercel (Hobby is enough). Keep the *Root Directory* at the repo root.
+2. Set the environment variables: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET` (a new random one,
+   not your local secret).
+3. Set the Functions region close to your Supabase region (Settings → Functions), e.g. `sin1` for Singapore.
+4. Deploy. Flyway creates the tables on the first start; then make the first admin with the SQL below.
+
+Free tier notes: the backend scales to zero after 5 minutes without traffic, so the next request waits for
+Spring Boot to start; a free Supabase project pauses after a week without activity.
+
+The same `Dockerfile` runs on other hosts (Render, Fly.io, ...): they set `PORT`, and the frontend then needs
+`VITE_API_URL=https://<backend-host>/api` plus `CORS_ALLOWED_ORIGINS=<frontend URL>` on the backend.
 
 ## Auth
 
