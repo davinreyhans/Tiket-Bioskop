@@ -19,7 +19,9 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,6 +52,18 @@ class TiketBioskopApplicationTests {
 
         mvc.perform(get("/films")).andExpect(status().isOk());
         mvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
+
+        // CORS: only the configured frontend origin may call the API from a browser
+        mvc.perform(options("/tickets").header(HttpHeaders.ORIGIN, "https://frontend.example")
+                        .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST")
+                        .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "authorization,content-type"))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "https://frontend.example"));
+        mvc.perform(options("/tickets").header(HttpHeaders.ORIGIN, "https://evil.example")
+                        .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/films").header(HttpHeaders.ORIGIN, "https://frontend.example"))
+                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "https://frontend.example"));
         mvc.perform(get("/users")).andExpect(status().isUnauthorized());
         mvc.perform(get("/users/me").header(HttpHeaders.AUTHORIZATION, bearer("alice")))
                 .andExpect(jsonPath("$.username").value("alice"));

@@ -25,6 +25,22 @@ npm run dev   # http://localhost:5173
 With the backend running on :8080, call it from the frontend as `/api/...` (e.g. `/api/films`):
 the Vite dev server proxies it to `http://localhost:8080/films`, so no CORS setup is needed in development.
 
+## Deploy
+
+Backend and frontend deploy separately; CI (`.github/workflows/ci.yml`) runs the backend tests and the
+frontend lint + build on every push.
+
+**Backend** (any host that runs Java 17: Render, Railway, Fly.io, a VPS, ...):
+
+- build: `mvn -B package -DskipTests`, run: `java -jar target/tiket-bioskop-0.0.1-SNAPSHOT.jar`
+- env vars: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, `CORS_ALLOWED_ORIGINS`
+  (the frontend URL, e.g. `https://tiket-bioskop.vercel.app`); `PORT` is honored when the host sets it
+- Flyway creates or updates the tables on startup
+
+**Frontend** (Vercel): import the repo, set *Root Directory* to `frontend`, and set
+`VITE_API_URL` to the backend URL (e.g. `https://tiket-bioskop-api.example.com`). `frontend/vercel.json`
+sends every path to `index.html`, so refreshing a page like `/films/1` works.
+
 ## Auth
 
 JWT. Register with `POST /users`, log in with `POST /auth/login` (`{"username":"…","password":"…"}`),
