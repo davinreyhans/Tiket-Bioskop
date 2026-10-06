@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "Films")
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "film_code"))
 public class Films {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

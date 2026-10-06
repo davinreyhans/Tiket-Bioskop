@@ -2,6 +2,7 @@ package com.example.tiketbioskop.entity;
 
 import com.example.tiketbioskop.model.SeatsId;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -14,8 +15,10 @@ import lombok.Setter;
 @IdClass(SeatsId.class)
 public class Seats {
     @Id
+    @Column(name = "studio_name")
     private Character studioName;
 
     @Id
+    @Column(name = "seats_code")
     private String seatsCode;
 }
