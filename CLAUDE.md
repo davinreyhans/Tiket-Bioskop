@@ -25,6 +25,9 @@ Spring Boot 4.1 (Java 17) backend + Vite/React/TS frontend in `frontend/`. Supab
 ## Deploy
 - One Vercel project via Services (`vercel.json`): `/api/*` → `Dockerfile` backend, rest → `frontend/`
 - The Dockerfile sets `SERVER_SERVLET_CONTEXT_PATH=/api` and `PORT=80`; locally there is no prefix (Vite proxy strips it)
+- The Dockerfile also sets `SERVER_FORWARD_HEADERS_STRATEGY=framework`: without it every browser POST/PUT/DELETE on Vercel
+  gets 403 "Invalid CORS request" (Spring sees http://…:80, not the https origin). curl without `Origin` won't show it
+- Vercel kills a container that isn't listening within ~28.6 s; backend region must match Supabase (`sin1`) to start in time
 - Docker isn't installed locally: the image is only built in CI (`docker` job)
 
 ## Frontend
