@@ -62,6 +62,8 @@ Error body berisi `message` (dan `errors` per field untuk 400) yang bisa langsun
 - [ ] Deploy frontend + backend ke satu project Vercel (Vercel Services, gratis di Hobby)
     - [x] Siapkan repo: `vercel.json` (services), `Dockerfile` backend (port 80, prefix `/api`), build image di CI, langkah deploy di README
     - [ ] Pastikan CI hijau di GitHub (termasuk job `docker`, Dockerfile belum pernah di-build)
-    - [ ] Import repo di Vercel, isi env `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, samakan region dengan Supabase
-    - [ ] Deploy, cek `/api/films` dan halaman depan, buat admin pertama, ukur lama cold start
+    - [x] Import repo di Vercel, isi env `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, samakan region dengan Supabase (`sin1`)
+    - [x] Deploy, cek `/api/films` dan halaman depan: https://tiket-bioskop-six.vercel.app
+    - [x] Ukur cold start: ~19 detik di `sin1` (batas start container Vercel ~28,6 detik; di `iad1` 29 detik → gagal)
+    - [ ] Percepat start (flag JVM, matikan validasi Hibernate di production, AppCDS) supaya cold start lebih singkat dan ada margin
 - [x] CI: tambah build frontend ke workflow GitHub Actions
