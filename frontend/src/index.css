@@ -132,13 +132,25 @@ button {
   cursor: pointer;
 }
 
+/* a link that looks like the primary button (navigation, not an action) */
+a.button {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid var(--accent-fill);
+  border-radius: var(--radius);
+  background: var(--accent-fill);
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
 button.secondary {
   background: transparent;
   color: var(--text);
   border-color: var(--border);
 }
 
-button:disabled {
+button:disabled,
+button[aria-disabled='true'] {
   opacity: 0.5;
   cursor: default;
 }
@@ -159,6 +171,10 @@ input {
   color: var(--text);
 }
 
+input::placeholder {
+  color: var(--muted);
+}
+
 .toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -169,10 +185,6 @@ input {
 
 .toolbar input[type='search'] {
   flex: 1 1 220px;
-}
-
-input::placeholder {
-  color: var(--muted);
 }
 
 .tabs {
@@ -225,6 +237,11 @@ input::placeholder {
   background: var(--notice-bg);
 }
 
+/* yellow .notice warns; a completed action confirms in green */
+.notice.success {
+  background: var(--success-bg);
+}
+
 /* films */
 .film-grid {
   display: grid;
@@ -237,11 +254,6 @@ input::placeholder {
 
 .film-grid[aria-busy='true'] {
   opacity: 0.6;
-/* yellow .notice warns; a completed action confirms in green */
-.notice.success {
-  background: var(--success-bg);
-}
-
 }
 
 .card {
@@ -354,6 +366,8 @@ th {
   margin: 24px auto 16px;
 }
 
+/* The curved accent line is the cinema screen itself, not a card accent: Impeccable's
+   border-accent-on-rounded finding here is an intentional exception */
 .screen {
   margin-bottom: 16px;
   padding: 4px;
@@ -366,8 +380,6 @@ th {
   color: var(--muted);
 }
 
-/* The curved accent line is the cinema screen itself, not a card accent: Impeccable's
-   border-accent-on-rounded finding here is an intentional exception */
 .seat-row {
   display: grid;
   grid-template-columns: 1.5rem repeat(10, minmax(0, 2.5rem));
@@ -392,7 +404,7 @@ th {
   border-radius: 6px;
 }
 
-.seat:not(:disabled):hover {
+.seat:not([aria-disabled='true']):hover {
   border-color: var(--accent);
 }
 
@@ -437,7 +449,10 @@ th {
   border: 1px solid var(--border);
 }
 
+/* sticky: on a phone the seat map fills the screen, the total and the book button stay in view */
 .checkout {
+  position: sticky;
+  bottom: 8px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -450,9 +465,12 @@ th {
   background: var(--surface);
 }
 
-/* my tickets */
+/* my tickets: title + time, then the seats, then total and actions */
 .ticket {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -469,8 +487,27 @@ th {
   gap: 4px 12px;
 }
 
+.ticket h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.ticket h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ticket h2 a:hover {
+  text-decoration: underline;
+}
+
 .ticket header .badge {
   margin-top: 0;
+}
+
+.ticket header p {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 .ticket-seats {
@@ -478,22 +515,64 @@ th {
   flex-wrap: wrap;
   gap: 8px;
   padding: 0;
-  margin: 12px 0 0;
+  margin: 0;
   list-style: none;
 }
 
 .ticket-seats li {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 4px 4px 12px;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
 }
 
-.ticket-seats button {
-  padding: 4px 10px;
-  font-size: 0.875rem;
+.ticket-seats li.busy {
+  opacity: 0.5;
+}
+
+/* small icon-only action inside a chip; 28px keeps it tappable */
+button.icon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -8px;
+  padding: 0;
+  border-color: transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+}
+
+button.icon:not(:disabled):hover {
+  background: var(--accent-soft);
+  color: var(--accent-on-soft);
+}
+
+.ticket footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.ticket footer p {
+  margin: 0;
+}
+
+.ticket-total {
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-total strong {
+  font-size: 1.125rem;
 }
 
 .seat-code {
@@ -587,6 +666,18 @@ select:focus-visible {
   }
 }
 
+.checkout-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ticket.just-booked {
+  border: 2px solid var(--accent);
+  padding: 19px;
+}
+
 .showtimes {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -599,4 +690,49 @@ select:focus-visible {
 .showtime {
   font-size: 1.375rem;
   font-variant-numeric: tabular-nums;
+}
+
+/* phones: the seat grid takes the full width so seats grow from ~27px to ~29-34px */
+@media (max-width: 480px) {
+  .seat-map {
+    margin-inline: -8px;
+  }
+
+  .seat-row {
+    grid-template-columns: 1rem repeat(10, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  /* keep the sticky bar short: the show is already in the page header */
+  .checkout {
+    padding: 12px;
+  }
+
+  .checkout-show {
+    display: none;
+  }
+}
+
+/* booking (payment) page */
+.booking {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.booking h1,
+.booking > p {
+  margin: 0;
+}
+
+.countdown strong {
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }

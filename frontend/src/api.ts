@@ -22,7 +22,20 @@ export type Schedule = {
   ticketPrice: number
 }
 
-export type Ticket = { ticketId: number; schedule: Schedule; studioName: string; seatsCode: string }
+export type Ticket = { ticketId: number; bookingId: number; schedule: Schedule; studioName: string; seatsCode: string }
+
+// RESERVED holds the seats until expiresAt; times are local cinema time. serverTime is the
+// backend's clock when it answered, so a countdown never depends on the visitor's clock.
+export type Booking = {
+  bookingId: number
+  schedule: Schedule
+  status: 'RESERVED' | 'PAID'
+  createdAt: string
+  expiresAt: string
+  paidAt: string | null
+  tickets: { ticketId: number; seatsCode: string }[]
+  serverTime: string
+}
 
 export type Profile = { userId: number; username: string; email: string; role: 'USER' | 'ADMIN' }
 
@@ -37,17 +50,16 @@ export class ApiError extends Error {
   }
 }
 
-// One readable line for any error, including every per-field validation message
+// One readable line for any error. Per-field messages from the backend already name their field
+// ("Harga tidak boleh negatif."), so the internal field names are left out.
 export function describeError(error: unknown): string {
   if (error instanceof ApiError && Object.keys(error.fieldErrors).length) {
-    return Object.entries(error.fieldErrors)
-      .map(([field, message]) => (field ? `${field}: ${message}` : message))
-      .join('; ')
+    return Object.values(error.fieldErrors).join(' ')
   }
   return (error as Error).message
 }
 
-type ErrorBody ={ message?: string; errors?: { field?: string; defaultMessage: string }[] }
+type ErrorBody = { message?: string; errors?: { field?: string; defaultMessage: string }[] }
 
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = getToken()

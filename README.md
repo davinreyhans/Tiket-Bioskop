@@ -68,14 +68,18 @@ update bioskop.users set role = 'ADMIN' where username = '<username>';
 | GET | `/films`, `/films?showing=true`, `/films/search?name=`, `/films/{id}` | public |
 | POST / PUT / DELETE | `/films`, `/films/{id}` | admin |
 | POST | `/auth/login` | public |
-| GET | `/schedules` (optional `?filmId=&date=YYYY-MM-DD&from=YYYY-MM-DD`), `/schedules/{id}`, `/schedules/{id}/seats` (free seats) | public |
+| GET | `/schedules` (optional `?filmId=&date=YYYY-MM-DD&from=YYYY-MM-DD`), `/schedules/{id}`, `/schedules/{id}/seats` (free seats; expired reservations count as free) | public |
 | POST / PUT / DELETE | `/schedules`, `/schedules/{id}` (delete only when no tickets are booked) | admin |
 | POST | `/users` (register) | public |
 | GET / PUT | `/users/me` | logged in |
 | GET / DELETE | `/users`, `/users/{username}`, `/users/{id}` | admin |
-| POST | `/tickets` (`{"scheduleId":1,"seatsCodes":["A1","A2"]}`, max 10 seats, all or nothing, until the show starts) | logged in |
+| POST | `/bookings` (`{"scheduleId":1,"seatsCodes":["A1","A2"]}`, max 10 seats, all or nothing, until the show starts): reserves the seats for 5 minutes (status `RESERVED`, `expiresAt`); unpaid seats are free again after that (a job also deletes expired reservations every minute) | logged in |
+| GET | `/bookings/me` (own reservations still waiting for payment) | logged in |
+| GET | `/bookings/{id}` (owner or admin; includes `serverTime` for the payment countdown) | logged in |
+| POST | `/bookings/{id}/pay` (owner; simulated payment, no gateway: marks it `PAID`; 409 once the 5 minutes are over; repeating it is safe) | logged in |
+| DELETE | `/bookings/{id}` (owner or admin; unpaid any time, paid up to 2 hours before the show) | logged in |
 | DELETE | `/tickets/{id}` (owner or admin, up to 2 hours before the show) | logged in |
-| GET | `/tickets/me` | logged in |
+| GET | `/tickets/me` (paid tickets only) | logged in |
 
 List endpoints (`/films`, `/films/search`, `/schedules`, `/users`) are paged: `?page=0&size=20&sort=field,asc`
 (size max 100). The response is `{"content": [...], "page": {"size", "number", "totalElements", "totalPages"}}`.

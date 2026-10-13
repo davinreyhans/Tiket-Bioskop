@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<!-- Source of tiket-bioskop-diagram.png; keep in sync with db/migration. Render:
+     chrome --headless=new --hide-scrollbars --force-device-scale-factor=1.5 --window-size=1400,1060 --screenshot=tiket-bioskop-diagram.png tiket-bioskop-diagram.html -->
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    width: 1400px;
+    height: 1060px;
+    background: #f0f4f7;
+    font: 17px/1.2 'Segoe UI', system-ui, sans-serif;
+    color: #2d3748;
+    position: relative;
+  }
+  h1 { position: absolute; left: 60px; top: 40px; margin: 0; font-size: 26px; font-weight: 600; }
+  h1 small { display: block; margin-top: 6px; font-size: 15px; font-weight: 400; color: #718096; }
+  .table {
+    position: absolute;
+    width: 360px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+    overflow: hidden;
+  }
+  .table header {
+    border-top: 8px solid var(--c);
+    background: #f8fafc;
+    border-bottom: 1px solid #d5dde5;
+    text-align: center;
+    padding: 14px 0 12px;
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .table header small { display: block; margin-top: 6px; font-size: 15px; color: #718096; }
+  .row { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; }
+  .row + .row { border-top: 1px solid #edf2f7; }
+  .row .name { flex: 1; }
+  .row .type { color: #a0aec0; font-size: 15px; }
+  .pk .name { font-weight: 600; }
+  .tag {
+    width: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 4px;
+    padding: 2px 0;
+  }
+  .tag.pk { background: #fdf2c8; color: #8a6d00; }
+  .tag.fk { background: #e3ecfa; color: #2c5aa0; }
+  .tag.uq { background: #e6f4ea; color: #276749; }
+  .tag.none { visibility: hidden; }
+  .note { padding: 10px 16px 12px; border-top: 1px solid #d5dde5; background: #f8fafc; color: #718096; font-size: 14px; line-height: 1.4; }
+  .legend { position: absolute; left: 60px; bottom: 40px; display: flex; gap: 20px; align-items: center; color: #718096; font-size: 14px; }
+  .legend span { display: inline-flex; gap: 6px; align-items: center; }
+  #lines { position: absolute; left: 0; top: 0; width: 1400px; height: 1060px; pointer-events: none; }
+</style>
+</head>
+<body>
+<h1>Tiket Bioskop<small>Schema <code>bioskop</code> (Flyway V1__init + V2__bookings)</small></h1>
+
+<section class="table" id="users" style="--c:#ed64a6; left:60px; top:150px">
+  <header>users</header>
+  <div class="row pk" data-col="users.user_id"><span class="tag pk">PK</span><span class="name">user_id</span><span class="type">integer</span></div>
+  <div class="row"><span class="tag uq">UQ</span><span class="name">username</span><span class="type">varchar(50)</span></div>
+  <div class="row"><span class="tag uq">UQ</span><span class="name">email</span><span class="type">varchar(255)</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">password</span><span class="type">varchar(100)</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">role</span><span class="type">varchar(10) · USER/ADMIN</span></div>
+</section>
+
+<section class="table" id="seats" style="--c:#4299e1; left:60px; top:680px">
+  <header>seats<small>A–C × A1–E10, seed di V1</small></header>
+  <div class="row pk" data-col="seats.studio_name"><span class="tag pk">PK</span><span class="name">studio_name</span><span class="type">char(1)</span></div>
+  <div class="row pk" data-col="seats.seats_code"><span class="tag pk">PK</span><span class="name">seats_code</span><span class="type">varchar(5)</span></div>
+</section>
+
+<section class="table" id="bookings" style="--c:#38b2ac; left:520px; top:120px">
+  <header>bookings</header>
+  <div class="row pk"><span class="tag pk">PK</span><span class="name">booking_id</span><span class="type">integer</span></div>
+  <div class="row" data-col="bookings.user_id"><span class="tag fk">FK</span><span class="name">user_id</span><span class="type">integer</span></div>
+  <div class="row" data-col="bookings.schedule_id"><span class="tag fk">FK</span><span class="name">schedule_id</span><span class="type">integer</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">status</span><span class="type">RESERVED / PAID</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">created_at</span><span class="type">timestamp</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">expires_at</span><span class="type">timestamp · +5 menit</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">paid_at</span><span class="type">timestamp</span></div>
+</section>
+
+<section class="table" id="tickets" style="--c:#ed8936; left:520px; top:540px">
+  <header>tickets</header>
+  <div class="row pk"><span class="tag pk">PK</span><span class="name">ticket_id</span><span class="type">integer</span></div>
+  <div class="row"><span class="tag fk">FK</span><span class="name">booking_id</span><span class="type">integer · cascade</span></div>
+  <div class="row" data-col="tickets.user_id"><span class="tag fk">FK</span><span class="name">user_id</span><span class="type">integer</span></div>
+  <div class="row" data-col="tickets.schedule_id"><span class="tag fk">FK</span><span class="name">schedule_id</span><span class="type">integer</span></div>
+  <div class="row" data-col="tickets.studio_name"><span class="tag fk">FK</span><span class="name">studio_name</span><span class="type">char(1)</span></div>
+  <div class="row" data-col="tickets.seats_code"><span class="tag fk">FK</span><span class="name">seats_code</span><span class="type">varchar(5)</span></div>
+  <div class="note">
+    (schedule_id, studio_name) → schedules<br>
+    (studio_name, seats_code) → seats<br>
+    unique (schedule_id, seats_code): satu kursi satu tiket per jadwal<br>
+    kursi terisi = booking PAID atau RESERVED yang belum lewat expires_at
+  </div>
+</section>
+
+<section class="table" id="films" style="--c:#9f7aea; left:980px; top:150px">
+  <header>films</header>
+  <div class="row pk" data-col="films.film_id"><span class="tag pk">PK</span><span class="name">film_id</span><span class="type">integer</span></div>
+  <div class="row"><span class="tag uq">UQ</span><span class="name">film_code</span><span class="type">varchar(20)</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">film_name</span><span class="type">varchar(255)</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">is_showing</span><span class="type">boolean</span></div>
+</section>
+
+<section class="table" id="schedules" style="--c:#667eea; left:980px; top:500px">
+  <header>schedules</header>
+  <div class="row pk" data-col="schedules.schedule_id"><span class="tag pk">PK</span><span class="name">schedule_id</span><span class="type">integer</span></div>
+  <div class="row" data-col="schedules.film_id"><span class="tag fk">FK</span><span class="name">film_id</span><span class="type">integer</span></div>
+  <div class="row" data-col="schedules.studio_name"><span class="tag none"></span><span class="name">studio_name</span><span class="type">char(1)</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">film_date</span><span class="type">date</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">film_start_time</span><span class="type">time</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">film_end_time</span><span class="type">time</span></div>
+  <div class="row"><span class="tag none"></span><span class="name">ticket_price</span><span class="type">integer ≥ 0</span></div>
+  <div class="note">unique (schedule_id, studio_name) untuk FK tiket<br>selesai ≤ mulai = selesai besoknya</div>
+</section>
+
+<div class="legend">
+  <span><span class="tag pk">PK</span> primary key</span>
+  <span><span class="tag fk">FK</span> foreign key</span>
+  <span><span class="tag uq">UQ</span> unique</span>
+  <span><svg width="40" height="14" style="position:static"><path d="M0 7H40M28 7L40 0M28 7L40 14" stroke="#718096" stroke-width="1.5" fill="none"/></svg> banyak</span>
+</div>
+
+<svg id="lines"></svg>
+
+<script>
+  // one-to-many connector: leaves `from` on side fromSide, enters `to` on side toSide with a crow's foot
+  const svg = document.getElementById('lines')
+  const box = (col) => document.querySelector(`[data-col="${col}"]`).getBoundingClientRect()
+  function link(from, fromSide, to, toSide, bend) {
+    const a = box(from), b = box(to)
+    const ax = fromSide === 'right' ? a.right : a.left, ay = a.top + a.height / 2
+    const bx = toSide === 'right' ? b.right : b.left, by = b.top + b.height / 2
+    const dirA = fromSide === 'right' ? 1 : -1, dirB = toSide === 'right' ? 1 : -1
+    const midX = bend ?? (ax + bx) / 2
+    const d = `M${ax} ${ay} H${midX} V${by} H${bx}`
+    // "one" bar near the source, crow's foot at the target
+    const one = `M${ax + dirA * 10} ${ay - 7} V${ay + 7}`
+    const foot = `M${bx + dirB * 14} ${by} L${bx} ${by - 7} M${bx + dirB * 14} ${by} L${bx} ${by + 7}`
+    for (const path of [d, one, foot]) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      el.setAttribute('d', path)
+      el.setAttribute('fill', 'none')
+      el.setAttribute('stroke', '#8796a8')
+      el.setAttribute('stroke-width', '1.6')
+      svg.append(el)
+    }
+  }
+  link('users.user_id', 'right', 'bookings.user_id', 'left', 470)
+  link('users.user_id', 'right', 'tickets.user_id', 'left', 450)
+  link('seats.studio_name', 'right', 'tickets.studio_name', 'left', 480)
+  link('seats.seats_code', 'right', 'tickets.seats_code', 'left', 495)
+  link('schedules.schedule_id', 'left', 'bookings.schedule_id', 'right', 940)
+  link('schedules.schedule_id', 'left', 'tickets.schedule_id', 'right', 925)
+  link('schedules.studio_name', 'left', 'tickets.studio_name', 'right', 955)
+  // stacked tables: bookings (one) straight down to tickets (many), via tickets.booking_id
+  {
+    const a = document.getElementById('bookings').getBoundingClientRect()
+    const b = document.getElementById('tickets').getBoundingClientRect()
+    const x = a.left + a.width / 2
+    for (const d of [`M${x} ${a.bottom} V${b.top}`, `M${x - 7} ${a.bottom + 10} H${x + 7}`,
+                     `M${x} ${b.top - 14} L${x - 7} ${b.top} M${x} ${b.top - 14} L${x + 7} ${b.top}`]) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      el.setAttribute('d', d)
+      el.setAttribute('fill', 'none')
+      el.setAttribute('stroke', '#8796a8')
+      el.setAttribute('stroke-width', '1.6')
+      svg.append(el)
+    }
+  }
+  link('films.film_id', 'right', 'schedules.film_id', 'right', 1380)
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import AdminFilmsPage from './pages/admin/AdminFilmsPage'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminSchedulesPage from './pages/admin/AdminSchedulesPage'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
+import BookingPage from './pages/BookingPage'
 import FilmDetailPage from './pages/FilmDetailPage'
 import FilmsPage from './pages/FilmsPage'
 import LoginPage from './pages/LoginPage'
@@ -19,7 +20,7 @@ function RequireLogin({ admin = false, children }: { admin?: boolean; children: 
   const user = useUser()
   const location = useLocation()
   if (!user) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
   }
   if (admin && user.role !== 'ADMIN') {
     return (
@@ -70,6 +71,14 @@ export default function App() {
           <Route path="/schedules/:scheduleId" element={<SeatsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/bookings/:bookingId"
+            element={
+              <RequireLogin>
+                <BookingPage />
+              </RequireLogin>
+            }
+          />
           <Route
             path="/tickets"
             element={

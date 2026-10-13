@@ -10,7 +10,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  // a page that sent the user here can pass { from } in the navigation state
+  // a page that sent the user here can pass { from } (path + query) in the navigation state;
+  // it is handed on to Register too, so signing up returns to the same place
   const from = (location.state as { from?: string } | null)?.from ?? '/'
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -46,7 +47,10 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="muted">
-        Belum punya akun? <Link to="/register">Daftar</Link>
+        Belum punya akun?{' '}
+        <Link to="/register" state={location.state}>
+          Daftar
+        </Link>
       </p>
     </section>
   )

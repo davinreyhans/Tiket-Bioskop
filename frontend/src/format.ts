@@ -47,3 +47,17 @@ export function formatDay(isoDate: string) {
   const [year, month, day] = isoDate.split('-').map(Number)
   return new Date(year, month - 1, day).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })
 }
+
+export const CANCEL_DEADLINE_MINUTES = 120 // same rule as the backend: up to 2 hours before the show
+
+// "Hari ini 17:00": the last moment a ticket for this show can be cancelled (may fall on the day before)
+export function formatCancelDeadline(filmDate: string, startTime: string) {
+  const deadline = new Date(Date.parse(`${filmDate}T${startTime}Z`) - CANCEL_DEADLINE_MINUTES * 60_000).toISOString()
+  return `${formatDay(deadline.slice(0, 10))} ${deadline.slice(11, 16)}`
+}
+
+// "Mulai dalam 58 menit" / "Mulai dalam 3 jam", only for shows within a day; further out the date says enough
+export function formatStartsIn(minutes: number) {
+  if (minutes <= 0 || minutes >= 24 * 60) return null
+  return minutes < 60 ? `Mulai dalam ${Math.ceil(minutes)} menit` : `Mulai dalam ${Math.floor(minutes / 60)} jam`
+}
