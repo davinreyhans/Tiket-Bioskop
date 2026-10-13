@@ -57,6 +57,8 @@ Error body berisi `message` (dan `errors` per field untuk 400) yang bisa langsun
 - [x] Daftar user (pagination) & hapus user
 
 ### UX (dari `/impeccable critique`, skor awal 23/40)
+- [x] P2: kontras mode gelap gagal AA (tombol aksen 3,7:1 → 5,5:1, badge/tab aktif 4,2:1 → 5,7:1, kursi terisi diberi tanda ×)
+- [x] P2: border input mode gelap 1,38:1 → 3,3:1 (mode terang 1,3:1 → 3,6:1), token `--control-border`
 - [x] P2: halaman browse generik: kartu film menampilkan jadwal terdekat, detail film pakai strip tanggal + pilihan jam (`GET /schedules?from=`)
 
 ### Bergantung ke backend

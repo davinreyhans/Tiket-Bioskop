@@ -4,11 +4,17 @@
   --text: #1d1b20;
   --muted: #6b6672;
   --border: #e2dfe6;
+  /* form fields need a 3:1 outline to be recognisable; --border is for decorative dividers */
+  --control-border: #8a8591;
   --accent: #b4232f;
   --accent-text: #ffffff;
+  /* fills under white text and text on --accent-soft; dark mode needs different shades than --accent */
+  --accent-fill: #b4232f;
   --accent-soft: #fbe9ea;
+  --accent-on-soft: #b4232f;
   --error: #b3261e;
   --notice-bg: #fff4d6;
+  --success-bg: #e3f3e6;
   --radius: 10px;
 
   color-scheme: light dark;
@@ -24,10 +30,14 @@
     --text: #ece9ef;
     --muted: #a39fa8;
     --border: #36333b;
+    --control-border: #706b77;
     --accent: #e5535f;
+    --accent-fill: #c4303c;
     --accent-soft: #3a1d20;
+    --accent-on-soft: #f07a83;
     --error: #ff8a80;
     --notice-bg: #3a3218;
+    --success-bg: #183021;
   }
 }
 
@@ -115,9 +125,9 @@ main {
 button {
   font: inherit;
   padding: 8px 16px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--accent-fill);
   border-radius: var(--radius);
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--accent-text);
   cursor: pointer;
 }
@@ -143,7 +153,7 @@ a:focus-visible {
 input {
   font: inherit;
   padding: 8px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
@@ -159,6 +169,10 @@ input {
 
 .toolbar input[type='search'] {
   flex: 1 1 220px;
+}
+
+input::placeholder {
+  color: var(--muted);
 }
 
 .tabs {
@@ -177,7 +191,7 @@ input {
 .tabs button[aria-pressed='true'] {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-on-soft);
   font-weight: 600;
 }
 
@@ -223,6 +237,11 @@ input {
 
 .film-grid[aria-busy='true'] {
   opacity: 0.6;
+/* yellow .notice warns; a completed action confirms in green */
+.notice.success {
+  background: var(--success-bg);
+}
+
 }
 
 .card {
@@ -249,7 +268,7 @@ input {
   border-radius: 999px;
   font-size: 0.8125rem;
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-on-soft);
 }
 
 .badge.off {
@@ -347,6 +366,8 @@ th {
   color: var(--muted);
 }
 
+/* The curved accent line is the cinema screen itself, not a card accent: Impeccable's
+   border-accent-on-rounded finding here is an intentional exception */
 .seat-row {
   display: grid;
   grid-template-columns: 1.5rem repeat(10, minmax(0, 2.5rem));
@@ -377,13 +398,17 @@ th {
 
 .seat[aria-pressed='true'],
 .seat.selected {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
   color: var(--accent-text);
 }
 
 .seat.taken {
-  background: var(--border);
+  /* a crossed-out seat reads as taken in both themes; a grey fill was lighter than free seats in dark mode */
+  background:
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--muted) 50%, transparent calc(50% + 1px)),
+    linear-gradient(to bottom right, transparent calc(50% - 1px), var(--muted) 50%, transparent calc(50% + 1px)),
+    var(--bg);
   border-color: var(--border);
   color: transparent;
   opacity: 1;
@@ -487,7 +512,7 @@ th {
 .tabs a.active {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-on-soft);
   font-weight: 600;
 }
 
@@ -533,7 +558,7 @@ th {
 select {
   font: inherit;
   padding: 8px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
