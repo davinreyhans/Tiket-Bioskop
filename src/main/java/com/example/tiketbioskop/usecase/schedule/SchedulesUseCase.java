@@ -15,10 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
 public class SchedulesUseCase {
+
+    // "1 Jan 2099 19:00", for messages shown to admins
+    private static final DateTimeFormatter SHOW_TIME = DateTimeFormatter.ofPattern("d MMM yyyy HH:mm", Locale.forLanguageTag("id"));
+    private static final DateTimeFormatter HOUR_MINUTE = DateTimeFormatter.ofPattern("HH:mm");
 
     private final DaoSchedules daoSchedules;
 
@@ -41,7 +47,7 @@ public class SchedulesUseCase {
         Schedules schedules = getSchedulesByScheduleId(scheduleId);
         // booked seats belong to the old studio, so moving studios would orphan them
         if (!schedules.getStudioName().equals(request.studioName()) && daoTickets.existsByScheduleScheduleId(scheduleId)) {
-            throw new ConflictException("Schedule id '" + scheduleId + "' has booked tickets, its studio can't be changed.");
+            throw new ConflictException("Jadwal ini sudah punya tiket terpesan, jadi studionya tidak bisa diganti.");
         }
         apply(schedules, request);
         assertStudioFree(schedules);
@@ -53,7 +59,7 @@ public class SchedulesUseCase {
         Schedules schedules = getSchedulesByScheduleId(scheduleId);
         // never silently drop people's tickets: they are cancelled first, one by one
         if (daoTickets.existsByScheduleScheduleId(scheduleId)) {
-            throw new ConflictException("Schedule id '" + scheduleId + "' has booked tickets, cancel them first.");
+            throw new ConflictException("Jadwal ini masih punya tiket terpesan. Batalkan tiketnya dulu sebelum menghapus jadwal.");
         }
         daoSchedules.delete(schedules);
     }
@@ -64,7 +70,7 @@ public class SchedulesUseCase {
 
     public Schedules getSchedulesByScheduleId(Integer schedulesId) {
         return daoSchedules.findById(schedulesId)
-                .orElseThrow(() -> new NotFoundException("Schedule id '" + schedulesId + "' not found."));
+                .orElseThrow(() -> new NotFoundException("Jadwal tidak ditemukan."));
     }
 
     // ponytail: app-level check, two admins saving at the same instant can still overlap;
@@ -78,14 +84,15 @@ public class SchedulesUseCase {
                         && schedules.startsAt().isBefore(other.endsAt()))
                 .findFirst()
                 .ifPresent(other -> {
-                    throw new ConflictException("Studio " + schedules.getStudioName() + " is already used by schedule id '"
-                            + other.getScheduleId() + "' (" + other.startsAt() + " to " + other.endsAt() + ").");
+                    throw new ConflictException("Studio " + schedules.getStudioName() + " sudah dipakai jadwal lain pada "
+                            + SHOW_TIME.format(other.startsAt()) + "–" + other.getFilmEndTime().format(HOUR_MINUTE)
+                            + ". Pilih jam atau studio lain.");
                 });
     }
 
     private void apply(Schedules schedules, ScheduleRequest request) {
         if (!daoSeats.existsByStudioName(request.studioName())) {
-            throw new NotFoundException("Studio '" + request.studioName() + "' not found.");
+            throw new NotFoundException("Studio " + request.studioName() + " tidak ada.");
         }
         schedules.setFilm(filmsUseCase.getFilmByFilmId(request.filmId()));
         schedules.setStudioName(request.studioName());

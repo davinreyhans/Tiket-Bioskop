@@ -11,7 +11,7 @@ export default function AdminUsersPage() {
   const [busy, setBusy] = useState(false)
 
   async function remove(user: Profile) {
-    if (!window.confirm(`Hapus user "${user.username}"?`)) {
+    if (!window.confirm(`Hapus user "${user.username}"? Akunnya tidak bisa dikembalikan.`)) {
       return
     }
     setBusy(true)

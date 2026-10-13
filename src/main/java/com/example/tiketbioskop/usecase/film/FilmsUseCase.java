@@ -30,7 +30,7 @@ public class FilmsUseCase {
 
     public Films getFilmByFilmId(Integer filmId) {
         return daoFilms.findById(filmId)
-                .orElseThrow(() -> new NotFoundException("Film id '" + filmId + "' not found."));
+                .orElseThrow(() -> new NotFoundException("Film tidak ditemukan."));
     }
 
     // POST
@@ -51,8 +51,8 @@ public class FilmsUseCase {
     public void deleteFilm(Integer filmId) {
         Films films = getFilmByFilmId(filmId);
         if (daoSchedules.existsByFilmFilmId(filmId)) {
-            throw new ConflictException("Film id '" + filmId + "' still has schedules, delete them first"
-                    + " (or set isShowing to false to hide it).");
+            throw new ConflictException("Film ini masih punya jadwal. Hapus jadwalnya dulu,"
+                    + " atau set film ke tidak tayang untuk menyembunyikannya.");
         }
         daoFilms.delete(films);
     }

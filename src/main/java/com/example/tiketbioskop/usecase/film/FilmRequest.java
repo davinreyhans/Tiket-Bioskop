@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record FilmRequest(
-        @NotBlank @Size(max = 20) String filmCode,
-        @NotBlank @Size(max = 255) String filmName,
-        @NotNull Boolean isShowing) {
+        @NotBlank(message = "Kode film wajib diisi.") @Size(max = 20, message = "Kode film maksimal 20 karakter.") String filmCode,
+        @NotBlank(message = "Judul film wajib diisi.") @Size(max = 255, message = "Judul film maksimal 255 karakter.") String filmName,
+        @NotNull(message = "Status tayang wajib diisi.") Boolean isShowing) {
 }
