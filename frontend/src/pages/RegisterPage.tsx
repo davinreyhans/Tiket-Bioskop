@@ -1,11 +1,14 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { api, ApiError, login } from '../api'
 import { ErrorMessage } from '../ui'
 
 // Same limits as the backend's UserRequest; the server stays the source of truth
 export default function RegisterPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  // where the user was going before being asked to log in (e.g. a seat selection), see LoginPage
+  const from = (location.state as { from?: string } | null)?.from ?? '/'
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [busy, setBusy] = useState(false)
@@ -20,7 +23,7 @@ export default function RegisterPage() {
       await api('/users', { method: 'POST', body: JSON.stringify(form) })
       // registered: log straight in instead of asking for the password again
       await login(form.username, form.password)
-      navigate('/', { replace: true })
+      navigate(from, { replace: true })
     } catch (e) {
       setError((e as Error).message)
       setFieldErrors(e instanceof ApiError ? e.fieldErrors : {})
@@ -54,7 +57,10 @@ export default function RegisterPage() {
         </button>
       </form>
       <p className="muted">
-        Sudah punya akun? <Link to="/login">Masuk</Link>
+        Sudah punya akun?{' '}
+        <Link to="/login" state={location.state}>
+          Masuk
+        </Link>
       </p>
     </section>
   )

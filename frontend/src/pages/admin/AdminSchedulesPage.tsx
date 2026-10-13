@@ -58,7 +58,7 @@ export default function AdminSchedulesPage() {
 
   function remove(schedule: Schedule) {
     const label = `${schedule.film.filmName}, ${formatDate(schedule.filmDate)} ${formatTime(schedule.filmStartTime)}`
-    if (window.confirm(`Hapus jadwal ${label}?`)) {
+    if (window.confirm(`Hapus jadwal ${label}? Jadwal yang dihapus tidak bisa dikembalikan.`)) {
       run(() => api(`/schedules/${schedule.scheduleId}`, { method: 'DELETE' }))
     }
   }

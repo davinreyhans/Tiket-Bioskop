@@ -4,11 +4,17 @@
   --text: #1d1b20;
   --muted: #6b6672;
   --border: #e2dfe6;
+  /* form fields need a 3:1 outline to be recognisable; --border is for decorative dividers */
+  --control-border: #8a8591;
   --accent: #b4232f;
   --accent-text: #ffffff;
+  /* fills under white text and text on --accent-soft; dark mode needs different shades than --accent */
+  --accent-fill: #b4232f;
   --accent-soft: #fbe9ea;
+  --accent-on-soft: #b4232f;
   --error: #b3261e;
   --notice-bg: #fff4d6;
+  --success-bg: #e3f3e6;
   --radius: 10px;
 
   color-scheme: light dark;
@@ -24,10 +30,14 @@
     --text: #ece9ef;
     --muted: #a39fa8;
     --border: #36333b;
+    --control-border: #706b77;
     --accent: #e5535f;
+    --accent-fill: #c4303c;
     --accent-soft: #3a1d20;
+    --accent-on-soft: #f07a83;
     --error: #ff8a80;
     --notice-bg: #3a3218;
+    --success-bg: #183021;
   }
 }
 
@@ -57,6 +67,12 @@ a {
 
 .muted {
   color: var(--muted);
+}
+
+/* "back to …" link above a page title */
+.back {
+  display: inline-block;
+  margin-bottom: 8px;
 }
 
 /* layout */
@@ -109,11 +125,22 @@ main {
 button {
   font: inherit;
   padding: 8px 16px;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--accent-fill);
   border-radius: var(--radius);
-  background: var(--accent);
+  background: var(--accent-fill);
   color: var(--accent-text);
   cursor: pointer;
+}
+
+/* a link that looks like the primary button (navigation, not an action) */
+a.button {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid var(--accent-fill);
+  border-radius: var(--radius);
+  background: var(--accent-fill);
+  color: var(--accent-text);
+  text-decoration: none;
 }
 
 button.secondary {
@@ -122,7 +149,8 @@ button.secondary {
   border-color: var(--border);
 }
 
-button:disabled {
+button:disabled,
+button[aria-disabled='true'] {
   opacity: 0.5;
   cursor: default;
 }
@@ -137,10 +165,14 @@ a:focus-visible {
 input {
   font: inherit;
   padding: 8px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
+}
+
+input::placeholder {
+  color: var(--muted);
 }
 
 .toolbar {
@@ -171,7 +203,7 @@ input {
 .tabs button[aria-pressed='true'] {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-on-soft);
   font-weight: 600;
 }
 
@@ -203,6 +235,11 @@ input {
   padding: 8px 12px;
   border-radius: var(--radius);
   background: var(--notice-bg);
+}
+
+/* yellow .notice warns; a completed action confirms in green */
+.notice.success {
+  background: var(--success-bg);
 }
 
 /* films */
@@ -243,7 +280,7 @@ input {
   border-radius: 999px;
   font-size: 0.8125rem;
   background: var(--accent-soft);
-  color: var(--accent);
+  color: var(--accent-on-soft);
 }
 
 .badge.off {
@@ -257,7 +294,7 @@ input {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 8px 12px;
-  margin: 16px 0;
+  margin: 0 0 16px;
 }
 
 .film-header h1 {
@@ -329,6 +366,8 @@ th {
   margin: 24px auto 16px;
 }
 
+/* The curved accent line is the cinema screen itself, not a card accent: Impeccable's
+   border-accent-on-rounded finding here is an intentional exception */
 .screen {
   margin-bottom: 16px;
   padding: 4px;
@@ -365,19 +404,23 @@ th {
   border-radius: 6px;
 }
 
-.seat:not(:disabled):hover {
+.seat:not([aria-disabled='true']):hover {
   border-color: var(--accent);
 }
 
 .seat[aria-pressed='true'],
 .seat.selected {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
   color: var(--accent-text);
 }
 
 .seat.taken {
-  background: var(--border);
+  /* a crossed-out seat reads as taken in both themes; a grey fill was lighter than free seats in dark mode */
+  background:
+    linear-gradient(to top right, transparent calc(50% - 1px), var(--muted) 50%, transparent calc(50% + 1px)),
+    linear-gradient(to bottom right, transparent calc(50% - 1px), var(--muted) 50%, transparent calc(50% + 1px)),
+    var(--bg);
   border-color: var(--border);
   color: transparent;
   opacity: 1;
@@ -406,7 +449,10 @@ th {
   border: 1px solid var(--border);
 }
 
+/* sticky: on a phone the seat map fills the screen, the total and the book button stay in view */
 .checkout {
+  position: sticky;
+  bottom: 8px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -419,9 +465,12 @@ th {
   background: var(--surface);
 }
 
-/* my tickets */
+/* my tickets: title + time, then the seats, then total and actions */
 .ticket {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
@@ -438,8 +487,27 @@ th {
   gap: 4px 12px;
 }
 
+.ticket h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.ticket h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ticket h2 a:hover {
+  text-decoration: underline;
+}
+
 .ticket header .badge {
   margin-top: 0;
+}
+
+.ticket header p {
+  flex-basis: 100%;
+  margin: 0;
 }
 
 .ticket-seats {
@@ -447,22 +515,64 @@ th {
   flex-wrap: wrap;
   gap: 8px;
   padding: 0;
-  margin: 12px 0 0;
+  margin: 0;
   list-style: none;
 }
 
 .ticket-seats li {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 4px 4px 12px;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
 }
 
-.ticket-seats button {
-  padding: 4px 10px;
-  font-size: 0.875rem;
+.ticket-seats li.busy {
+  opacity: 0.5;
+}
+
+/* small icon-only action inside a chip; 28px keeps it tappable */
+button.icon {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: -8px;
+  padding: 0;
+  border-color: transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+}
+
+button.icon:not(:disabled):hover {
+  background: var(--accent-soft);
+  color: var(--accent-on-soft);
+}
+
+.ticket footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.ticket footer p {
+  margin: 0;
+}
+
+.ticket-total {
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-total strong {
+  font-size: 1.125rem;
 }
 
 .seat-code {
@@ -481,7 +591,7 @@ th {
 .tabs a.active {
   background: var(--accent-soft);
   border-color: var(--accent);
-  color: var(--accent);
+  color: var(--accent-on-soft);
   font-weight: 600;
 }
 
@@ -527,7 +637,7 @@ th {
 select {
   font: inherit;
   padding: 8px 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
@@ -554,4 +664,75 @@ select:focus-visible {
     display: block;
     overflow-x: auto;
   }
+}
+
+.checkout-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ticket.just-booked {
+  border: 2px solid var(--accent);
+  padding: 19px;
+}
+
+.showtimes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.showtime {
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* phones: the seat grid takes the full width so seats grow from ~27px to ~29-34px */
+@media (max-width: 480px) {
+  .seat-map {
+    margin-inline: -8px;
+  }
+
+  .seat-row {
+    grid-template-columns: 1rem repeat(10, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  /* keep the sticky bar short: the show is already in the page header */
+  .checkout {
+    padding: 12px;
+  }
+
+  .checkout-show {
+    display: none;
+  }
+}
+
+/* booking (payment) page */
+.booking {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.booking h1,
+.booking > p {
+  margin: 0;
+}
+
+.countdown strong {
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }

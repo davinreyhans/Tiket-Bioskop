@@ -1,9 +1,7 @@
 package com.example.tiketbioskop.controller;
 
 import com.example.tiketbioskop.entity.Tickets;
-import com.example.tiketbioskop.usecase.ticket.TicketRequest;
 import com.example.tiketbioskop.usecase.ticket.TicketsUseCase;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -21,13 +19,6 @@ public class TicketsController {
     @GetMapping("/schedules/{scheduleId}/seats")
     public List<String> getAvailableSeats(@PathVariable Integer scheduleId) {
         return ticketsUseCase.getAvailableSeats(scheduleId);
-    }
-
-    // One or more seats: {"scheduleId":1,"seatsCodes":["A1","A2"]}
-    @PostMapping("/tickets")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Tickets> bookTickets(Principal principal, @Valid @RequestBody TicketRequest request) {
-        return ticketsUseCase.bookTickets(principal.getName(), request);
     }
 
     @GetMapping("/tickets/me")

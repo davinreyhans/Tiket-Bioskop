@@ -34,7 +34,7 @@ public class AuthUseCase {
         Users users = daoUsers.findByUsername(request.username())
                 .filter(u -> passwordEncoder.matches(request.password(), u.getPassword()))
                 // same message for unknown user and wrong password, so usernames can't be probed
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username atau password salah."));
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()

@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router'
-import { useApi, type Film, type Page } from '../api'
+import { useApi, type Film, type Page, type Schedule } from '../api'
+import { cinemaToday, formatDay, formatTime, minutesUntilShow } from '../format'
 import { ErrorMessage, Pager } from '../ui'
 
 const FILTERS = [
@@ -20,6 +21,17 @@ export default function FilmsPage() {
     ? `/films/search?name=${encodeURIComponent(name)}&page=${page}`
     : `/films?${showing === 'all' ? '' : `showing=${showing}&`}page=${page}`
   const { data, error, loading } = useApi<Page<Film>>(path)
+
+  // ponytail: one request for every upcoming show (max page size 100); films past the first 100 shows
+  // get no times on their card. Add a "next shows per film" endpoint if the schedule grows that big
+  const upcoming = useApi<Page<Schedule>>(`/schedules?from=${cinemaToday()}&size=100`)
+  const nextShows = new Map<number, Schedule[]>()
+  upcoming.data?.content
+    .filter((show) => minutesUntilShow(show.filmDate, show.filmStartTime) > 0)
+    .forEach((show) => {
+      const shows = nextShows.get(show.film.filmId) ?? []
+      if (shows.length < 3) nextShows.set(show.film.filmId, [...shows, show])
+    })
 
   function update(changes: Record<string, string>) {
     const next = new URLSearchParams(params)
@@ -75,10 +87,11 @@ export default function FilmsPage() {
           <li key={film.filmId}>
             <Link to={`/films/${film.filmId}`} className="card">
               <strong>{film.filmName}</strong>
-              <span className="muted">{film.filmCode}</span>
-              <span className={film.isShowing ? 'badge' : 'badge off'}>
-                {film.isShowing ? 'Sedang tayang' : 'Tidak tayang'}
+              <span className="muted">
+                {nextShows.has(film.filmId) ? formatShows(nextShows.get(film.filmId)!) : 'Belum ada jadwal'}
               </span>
+              {/* only the exception gets a badge; a "showing" badge on every card is noise */}
+              {!film.isShowing && <span className="badge off">Tidak tayang</span>}
             </Link>
           </li>
         ))}
@@ -87,4 +100,11 @@ export default function FilmsPage() {
       {data && <Pager page={data.page} onChange={(next) => update({ page: next ? String(next) : '' })} />}
     </section>
   )
+}
+
+// "Hari ini 13:00, 19:00 · Besok 15:00": one label per day
+function formatShows(shows: Schedule[]) {
+  const byDay = new Map<string, string[]>()
+  shows.forEach((show) => byDay.set(show.filmDate, [...(byDay.get(show.filmDate) ?? []), formatTime(show.filmStartTime)]))
+  return [...byDay].map(([day, times]) => `${formatDay(day)} ${times.join(', ')}`).join(' · ')
 }

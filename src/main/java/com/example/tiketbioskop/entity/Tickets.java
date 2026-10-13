@@ -20,9 +20,19 @@ public class Tickets {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "booking_id", nullable = false)
+    private Bookings booking;
+
     @ManyToOne
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedules schedule;
+
+    // the booking itself would loop back to its tickets in JSON, so only its id is sent
+    public Integer getBookingId() {
+        return booking.getBookingId();
+    }
 
     // Always the schedule's studio; the DB foreign keys keep studio + seat consistent
     @Column(name = "studio_name", nullable = false)

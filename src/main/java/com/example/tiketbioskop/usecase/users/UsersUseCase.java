@@ -33,12 +33,12 @@ public class UsersUseCase {
     public Users getUserByUsername(String username) {
         log.debug("getUserByUsername [{}]", username);
         return daoUsers.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Username '" + username + "' not found."));
+                .orElseThrow(() -> new NotFoundException("User '" + username + "' tidak ditemukan."));
     }
 
     private Users getUserById(Integer userId) {
         return daoUsers.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User id '" + userId + "' not found."));
+                .orElseThrow(() -> new NotFoundException("User tidak ditemukan."));
     }
 
     // POST
@@ -59,7 +59,7 @@ public class UsersUseCase {
         Users users = getUserById(userId);
         // tickets are kept as history, so a user who ever booked stays
         if (daoTickets.existsByUserUserId(userId)) {
-            throw new ConflictException("User id '" + userId + "' still has tickets, cancel them first.");
+            throw new ConflictException("User ini masih punya tiket, jadi tidak bisa dihapus. Batalkan tiketnya dulu.");
         }
         daoUsers.delete(users);
     }
@@ -69,12 +69,12 @@ public class UsersUseCase {
         daoUsers.findByUsername(request.username())
                 .filter(other -> !other.getUserId().equals(users.getUserId()))
                 .ifPresent(other -> {
-                    throw new ConflictException("The '" + request.username() + "' username already exist.");
+                    throw new ConflictException("Username '" + request.username() + "' sudah dipakai. Coba username lain.");
                 });
         daoUsers.findByEmail(request.email())
                 .filter(other -> !other.getUserId().equals(users.getUserId()))
                 .ifPresent(other -> {
-                    throw new ConflictException("The '" + request.email() + "' email already exist.");
+                    throw new ConflictException("Email '" + request.email() + "' sudah terdaftar. Pakai email lain.");
                 });
 
         users.setUsername(request.username());

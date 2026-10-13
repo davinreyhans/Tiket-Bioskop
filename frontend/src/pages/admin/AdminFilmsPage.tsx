@@ -48,7 +48,7 @@ export default function AdminFilmsPage() {
   }
 
   async function remove(film: Film) {
-    if (!window.confirm(`Hapus film "${film.filmName}"?`)) {
+    if (!window.confirm(`Hapus film "${film.filmName}"? Film yang dihapus tidak bisa dikembalikan.`)) {
       return
     }
     setBusy(true)

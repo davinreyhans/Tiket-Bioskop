@@ -58,7 +58,11 @@ export default function ProfilePage() {
           <ErrorMessage error={fieldErrors.password} />
         </label>
         <ErrorMessage error={error} />
-        {saved && <p className="notice">Profil tersimpan.</p>}
+        {saved && (
+          <p className="notice success" role="status">
+            Profil tersimpan.
+          </p>
+        )}
         <button type="submit" disabled={busy}>
           {busy ? 'Menyimpan…' : 'Simpan'}
         </button>

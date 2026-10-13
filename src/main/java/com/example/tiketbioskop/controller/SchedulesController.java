@@ -19,12 +19,13 @@ import java.time.LocalDate;
 public class SchedulesController {
     private final SchedulesUseCase schedulesUseCase;
 
-    // Optional filters: /schedules?filmId=1&date=2026-10-01&page=0&size=20
+    // Optional filters: /schedules?filmId=1&date=2026-10-01&page=0&size=20; from=2026-10-01 = on or after that day
     @GetMapping
     public Page<Schedules> getSchedules(@RequestParam(required = false) Integer filmId,
                                         @RequestParam(required = false) LocalDate date,
+                                        @RequestParam(required = false) LocalDate from,
                                         @SortDefault(sort = {"filmDate", "filmStartTime"}) Pageable pageable) {
-        return schedulesUseCase.getSchedules(filmId, date, pageable);
+        return schedulesUseCase.getSchedules(filmId, date, from, pageable);
     }
 
     @GetMapping("/{scheduleId}")
