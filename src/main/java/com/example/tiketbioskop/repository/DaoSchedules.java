@@ -17,8 +17,9 @@ public interface DaoSchedules extends JpaRepository<Schedules, Integer> {
     @Query("""
             select s from Schedules s
             where (:filmId is null or s.film.filmId = :filmId)
-              and (cast(:filmDate as LocalDate) is null or s.filmDate = :filmDate)""")
-    Page<Schedules> search(Integer filmId, LocalDate filmDate, Pageable pageable);
+              and (cast(:filmDate as LocalDate) is null or s.filmDate = :filmDate)
+              and (cast(:from as LocalDate) is null or s.filmDate >= :from)""")
+    Page<Schedules> search(Integer filmId, LocalDate filmDate, LocalDate from, Pageable pageable);
 
     List<Schedules> findByStudioNameAndFilmDateBetween(Character studioName, LocalDate from, LocalDate to);
 

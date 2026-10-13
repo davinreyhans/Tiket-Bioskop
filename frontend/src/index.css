@@ -59,6 +59,12 @@ a {
   color: var(--muted);
 }
 
+/* "back to …" link above a page title */
+.back {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
 /* layout */
 .topbar {
   display: flex;
@@ -257,7 +263,7 @@ input {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 8px 12px;
-  margin: 16px 0;
+  margin: 0 0 16px;
 }
 
 .film-header h1 {
@@ -554,4 +560,18 @@ select:focus-visible {
     display: block;
     overflow-x: auto;
   }
+}
+
+.showtimes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.showtime {
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums;
 }

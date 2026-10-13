@@ -1,18 +1,15 @@
 import { Link, useParams, useSearchParams } from 'react-router'
 import { useApi, type Film, type Page, type Schedule } from '../api'
-import { formatDate, formatRupiah, formatTime, minutesUntilShow } from '../format'
-import { ErrorMessage, Pager } from '../ui'
+import { cinemaToday, formatDate, formatDay, formatRupiah, formatTime, minutesUntilShow } from '../format'
+import { ErrorMessage } from '../ui'
 
 export default function FilmDetailPage() {
   const { filmId } = useParams()
   const [params, setParams] = useSearchParams()
-  const date = params.get('date') ?? ''
-  const page = Number(params.get('page') ?? 0)
 
   const film = useApi<Film>(`/films/${filmId}`)
-  const schedules = useApi<Page<Schedule>>(
-    `/schedules?filmId=${filmId}${date ? `&date=${date}` : ''}&page=${page}`,
-  )
+  // ponytail: the next 100 shows of one film, no paging; page through `from` if a film ever has more
+  const schedules = useApi<Page<Schedule>>(`/schedules?filmId=${filmId}&from=${cinemaToday()}&size=100`)
 
   if (film.error) {
     return (
@@ -23,13 +20,20 @@ export default function FilmDetailPage() {
     )
   }
 
+  // only dates that still have a show to book, in order
+  const byDate = new Map<string, Schedule[]>()
+  schedules.data?.content
+    .filter((show) => minutesUntilShow(show.filmDate, show.filmStartTime) > 0)
+    .forEach((show) => byDate.set(show.filmDate, [...(byDate.get(show.filmDate) ?? []), show]))
+  const dates = [...byDate.keys()]
+  const date = byDate.has(params.get('date') ?? '') ? params.get('date')! : dates[0]
+
   return (
     <section>
-      <Link to="/">‹ Semua film</Link>
+      <Link to="/" className="back">‹ Semua film</Link>
       {film.data && (
         <header className="film-header">
           <h1>{film.data.filmName}</h1>
-          <span className="muted">{film.data.filmCode}</span>
           <span className={film.data.isShowing ? 'badge' : 'badge off'}>
             {film.data.isShowing ? 'Sedang tayang' : 'Tidak tayang'}
           </span>
@@ -37,64 +41,45 @@ export default function FilmDetailPage() {
       )}
 
       <h2>Jadwal</h2>
-      <div className="toolbar">
-        <label>
-          Tanggal{' '}
-          <input type="date" value={date} onChange={(event) => setParams(event.target.value ? { date: event.target.value } : {})} />
-        </label>
-        {date && (
-          <button type="button" className="secondary" onClick={() => setParams({})}>
-            Semua tanggal
-          </button>
-        )}
-      </div>
-
       <ErrorMessage error={schedules.error} />
       {schedules.loading && !schedules.data && <p className="muted">Memuat…</p>}
-      {schedules.data && schedules.data.content.length === 0 && (
-        <p className="muted">Belum ada jadwal{date ? ' di tanggal ini' : ''}.</p>
-      )}
+      {schedules.data && dates.length === 0 && <p className="muted">Belum ada jadwal mendatang.</p>}
 
-      {schedules.data && schedules.data.content.length > 0 && (
-        <table aria-busy={schedules.loading}>
-          <thead>
-            <tr>
-              <th>Tanggal</th>
-              <th>Jam</th>
-              <th>Studio</th>
-              <th>Harga</th>
-              <th><span className="visually-hidden">Aksi</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {schedules.data.content.map((schedule) => (
-              <tr key={schedule.scheduleId}>
-                <td>{formatDate(schedule.filmDate)}</td>
-                <td>
-                  {formatTime(schedule.filmStartTime)}–{formatTime(schedule.filmEndTime)}
-                  {/* an end time at or before the start time means the show ends the next day */}
-                  {schedule.filmEndTime <= schedule.filmStartTime && <span className="muted"> (+1 hari)</span>}
-                </td>
-                <td>{schedule.studioName}</td>
-                <td>{formatRupiah(schedule.ticketPrice)}</td>
-                <td>
-                  {minutesUntilShow(schedule.filmDate, schedule.filmStartTime) > 0 ? (
-                    <Link to={`/schedules/${schedule.scheduleId}`}>Pilih kursi</Link>
-                  ) : (
-                    <span className="muted">Sudah mulai</span>
-                  )}
-                </td>
-              </tr>
+      {date && (
+        <>
+          <div className="tabs" role="group" aria-label="Tanggal">
+            {dates.map((day) => (
+              <button
+                key={day}
+                type="button"
+                aria-pressed={day === date}
+                title={formatDate(day)}
+                onClick={() => setParams({ date: day }, { replace: true })}
+              >
+                {formatDay(day)}
+              </button>
             ))}
-          </tbody>
-        </table>
-      )}
+          </div>
 
-      {schedules.data && (
-        <Pager
-          page={schedules.data.page}
-          onChange={(next) => setParams({ ...(date ? { date } : {}), ...(next ? { page: String(next) } : {}) })}
-        />
+          <p className="muted">{formatDate(date)}</p>
+          <ul className="showtimes">
+            {byDate.get(date)!.map((show) => (
+              <li key={show.scheduleId}>
+                <Link to={`/schedules/${show.scheduleId}`} className="card">
+                  <strong className="showtime">{formatTime(show.filmStartTime)}</strong>
+                  <span className="muted">
+                    s.d. {formatTime(show.filmEndTime)}
+                    {/* an end time at or before the start time means the show ends the next day */}
+                    {show.filmEndTime <= show.filmStartTime && ' (+1 hari)'}
+                  </span>
+                  <span>
+                    Studio {show.studioName} · {formatRupiah(show.ticketPrice)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </section>
   )

@@ -68,7 +68,7 @@ update bioskop.users set role = 'ADMIN' where username = '<username>';
 | GET | `/films`, `/films?showing=true`, `/films/search?name=`, `/films/{id}` | public |
 | POST / PUT / DELETE | `/films`, `/films/{id}` | admin |
 | POST | `/auth/login` | public |
-| GET | `/schedules` (optional `?filmId=&date=YYYY-MM-DD`), `/schedules/{id}`, `/schedules/{id}/seats` (free seats) | public |
+| GET | `/schedules` (optional `?filmId=&date=YYYY-MM-DD&from=YYYY-MM-DD`), `/schedules/{id}`, `/schedules/{id}/seats` (free seats) | public |
 | POST / PUT / DELETE | `/schedules`, `/schedules/{id}` (delete only when no tickets are booked) | admin |
 | POST | `/users` (register) | public |
 | GET / PUT | `/users/me` | logged in |

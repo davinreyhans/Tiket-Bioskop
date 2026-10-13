@@ -23,9 +23,27 @@ export function formatTime(time: string) {
 // Same zone as `bioskop.timezone` in the backend: schedules are local cinema time
 const CINEMA_TIME_ZONE = 'Asia/Jakarta'
 
+// "2026-10-08T19:30:00" in cinema time, whatever the browser's time zone
+function cinemaNow() {
+  return new Date().toLocaleString('sv-SE', { timeZone: CINEMA_TIME_ZONE }).replace(' ', 'T')
+}
+
+// "2026-10-08": today in cinema time, for the backend's ?from= filter
+export function cinemaToday() {
+  return cinemaNow().slice(0, 10)
+}
+
 // Minutes from now until the show starts (negative = already started), measured in cinema time.
 // Both wall-clock times are read as if they were UTC, so the browser's own time zone never matters.
 export function minutesUntilShow(filmDate: string, startTime: string) {
-  const now = new Date().toLocaleString('sv-SE', { timeZone: CINEMA_TIME_ZONE }).replace(' ', 'T')
-  return (Date.parse(`${filmDate}T${startTime}Z`) - Date.parse(`${now}Z`)) / 60_000
+  return (Date.parse(`${filmDate}T${startTime}Z`) - Date.parse(`${cinemaNow()}Z`)) / 60_000
+}
+
+// "Hari ini", "Besok" or "Sab, 10 Okt": short day labels for showtimes
+export function formatDay(isoDate: string) {
+  const days = (Date.parse(`${isoDate}T00:00:00Z`) - Date.parse(`${cinemaToday()}T00:00:00Z`)) / 86_400_000
+  if (days === 0) return 'Hari ini'
+  if (days === 1) return 'Besok'
+  const [year, month, day] = isoDate.split('-').map(Number)
+  return new Date(year, month - 1, day).toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })
 }

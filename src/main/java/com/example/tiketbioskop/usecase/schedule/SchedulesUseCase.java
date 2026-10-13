@@ -64,8 +64,8 @@ public class SchedulesUseCase {
         daoSchedules.delete(schedules);
     }
 
-    public Page<Schedules> getSchedules(Integer filmId, LocalDate filmDate, Pageable pageable) {
-        return daoSchedules.search(filmId, filmDate, pageable);
+    public Page<Schedules> getSchedules(Integer filmId, LocalDate filmDate, LocalDate from, Pageable pageable) {
+        return daoSchedules.search(filmId, filmDate, from, pageable);
     }
 
     public Schedules getSchedulesByScheduleId(Integer schedulesId) {

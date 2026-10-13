@@ -56,6 +56,9 @@ Error body berisi `message` (dan `errors` per field untuk 400) yang bisa langsun
 - [x] Kelola jadwal: tambah / edit / hapus (pilih film, studio, tanggal, jam, harga), tampilkan pesan 409 kalau bentrok di studio yang sama
 - [x] Daftar user (pagination) & hapus user
 
+### UX (dari `/impeccable critique`, skor awal 23/40)
+- [x] P2: halaman browse generik: kartu film menampilkan jadwal terdekat, detail film pakai strip tanggal + pilihan jam (`GET /schedules?from=`)
+
 ### Bergantung ke backend
 - [x] Auth: JWT dulu sebelum login di frontend dibuat, supaya password tidak disimpan di browser (lihat bagian Teknis)
 - [x] CORS di backend untuk domain frontend production (env `CORS_ALLOWED_ORIGINS`)
